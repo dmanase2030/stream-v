@@ -101,7 +101,7 @@ export default function ProfileGate() {
   if (loading) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] bg-[#141414] flex flex-col items-center justify-center px-4">
+    <div className="fixed inset-0 z-[200] bg-[#141414] flex flex-col items-center justify-center px-4 overflow-hidden">
       {/* Logo */}
       <div className="absolute top-8 left-[4%]">
         <span className="text-[#E50914] font-black text-3xl tracking-tighter uppercase" style={{ fontFamily: 'Arial Black, sans-serif' }}>
@@ -149,11 +149,13 @@ export default function ProfileGate() {
           </div>
         ))}
 
-        {/* Add profile */}
+        {/* Add profile - Netflix style box */}
         {profiles.length < 5 && !managing && (
           <button onClick={() => setAdding(true)} className="flex flex-col items-center gap-2 group">
-            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-md flex items-center justify-center text-5xl text-[#808080] group-hover:text-white group-hover:bg-white/10 transition-all">
-              +
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-md border-2 border-transparent flex items-center justify-center transition-all group-hover:border-white group-hover:bg-white/5">
+              <svg className="w-12 h-12 sm:w-16 sm:h-16 text-[#808080] group-hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+              </svg>
             </div>
             <span className="text-sm text-[#808080] group-hover:text-white transition-colors">Add Profile</span>
           </button>

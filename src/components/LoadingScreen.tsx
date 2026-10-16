@@ -1,85 +1,176 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function LoadingScreen() {
   const [visible, setVisible] = useState(true);
-  const [fading, setFading] = useState(false);
+  const [phase, setPhase] = useState<'logo' | 'streaks' | 'fade'>('logo');
+  const audioRef = useRef<AudioContext | null>(null);
+
+  // Synthesized "ta-dum" style two-tone chime (original, not Netflix's copyrighted sound)
+  const playTadum = () => {
+    try {
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+      audioRef.current = ctx;
+
+      // Two-tone: low "ta" then higher "dum"
+      const playNote = (freq: number, startTime: number, duration: number, volume: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, startTime);
+        // Slight pitch bend for cinematic feel
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.98, startTime + duration);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(volume, startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.1);
+      };
+
+      const now = ctx.currentTime;
+      playNote(146.83, now, 0.6, 0.4); // D3 - "ta"
+      playNote(220.0, now + 0.35, 1.2, 0.5); // A3 - "dum"
+      // Add a subtle low boom
+      playNote(73.42, now + 0.35, 1.5, 0.3); // D2
+    } catch {
+      // Audio blocked or unsupported - skip silently
+    }
+  };
 
   useEffect(() => {
-    // Check if we've already shown it this session
     const shown = sessionStorage.getItem('luniflex_intro_shown');
     if (shown) {
       setVisible(false);
       return;
     }
 
-    // Netflix-style intro: show logo animation, then fade out
-    const fadeTimer = setTimeout(() => setFading(true), 2200);
+    // Try to play sound (may be blocked until user interaction)
+    playTadum();
+
+    // Phase 1: Logo (0 - 1.8s) - red L scales up like Netflix N
+    // Phase 2: Streaks (1.8s - 3.2s) - L explodes into colorful light streaks
+    // Phase 3: Fade (3.2s - 3.8s)
+    const streakTimer = setTimeout(() => setPhase('streaks'), 1800);
+    const fadeTimer = setTimeout(() => setPhase('fade'), 3200);
     const hideTimer = setTimeout(() => {
       setVisible(false);
       sessionStorage.setItem('luniflex_intro_shown', '1');
-    }, 2800);
+    }, 3900);
 
     return () => {
+      clearTimeout(streakTimer);
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
+      audioRef.current?.close().catch(() => {});
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!visible) return null;
 
+  // Colorful streak colors like Netflix intro
+  const streakColors = [
+    '#ff0000', '#ff3300', '#ff6600', '#ff9900', '#ffcc00',
+    '#ffff00', '#ccff00', '#66ff00', '#00ff66', '#00ffcc',
+    '#00ccff', '#0099ff', '#0066ff', '#3300ff', '#6600ff',
+  ];
+
   return (
     <div
-      className={`fixed inset-0 z-[300] bg-black flex items-center justify-center transition-opacity duration-700 ${
-        fading ? 'opacity-0' : 'opacity-100'
+      className={`fixed inset-0 z-[300] bg-black flex items-center justify-center overflow-hidden transition-opacity duration-700 ${
+        phase === 'fade' ? 'opacity-0' : 'opacity-100'
       }`}
     >
-      {/* Netflix-style L logo animation */}
-      <div className="relative">
+      {phase === 'logo' && (
         <div
-          className="text-[#E50914] font-black tracking-tighter uppercase animate-logo-zoom"
+          className="text-[#E50914] font-black tracking-tighter uppercase"
           style={{
             fontFamily: 'Arial Black, sans-serif',
-            fontSize: 'clamp(3rem, 12vw, 7rem)',
-            textShadow: '0 0 80px rgba(229, 9, 20, 0.5)',
+            fontSize: 'clamp(4rem, 18vw, 10rem)',
+            textShadow: '0 0 100px rgba(229, 9, 20, 0.6)',
+            animation: 'netflix-logo-in 1.8s ease-out forwards',
           }}
         >
           L
         </div>
-        {/* Light streak effect */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shine" />
+      )}
+
+      {phase !== 'logo' && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          {/* Light streaks expanding outward */}
+          <div className="flex items-center h-full" style={{ animation: 'streaks-expand 1.4s ease-out forwards' }}>
+            {streakColors.map((color, i) => (
+              <div
+                key={i}
+                className="h-full mx-[2px]"
+                style={{
+                  width: 'clamp(4px, 1.5vw, 12px)',
+                  background: `linear-gradient(to bottom, transparent 10%, ${color} 30%, ${color} 70%, transparent 90%)`,
+                  boxShadow: `0 0 30px ${color}`,
+                  opacity: 0.9,
+                  animation: `streak-flicker 0.3s ease-in-out ${i * 0.02}s infinite alternate`,
+                }}
+              />
+            ))}
+          </div>
+          {/* Center glow */}
+          <div
+            className="absolute w-40 h-40 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(229,9,20,0.8) 0%, transparent 70%)',
+              animation: 'glow-pulse 1.4s ease-out forwards',
+            }}
+          />
         </div>
-      </div>
+      )}
 
       <style jsx>{`
-        @keyframes logo-zoom {
+        @keyframes netflix-logo-in {
           0% {
-            transform: scale(0.8);
+            transform: scale(0.7);
             opacity: 0;
           }
-          20% {
+          15% {
             opacity: 1;
           }
           100% {
-            transform: scale(1.05);
+            transform: scale(1.15);
             opacity: 1;
           }
         }
-        @keyframes shine {
+        @keyframes streaks-expand {
           0% {
-            transform: translateX(-100%);
+            transform: scaleX(0.1);
+            opacity: 0.5;
+          }
+          30% {
+            opacity: 1;
           }
           100% {
-            transform: translateX(400%);
+            transform: scaleX(2.5);
+            opacity: 0;
           }
         }
-        .animate-logo-zoom {
-          animation: logo-zoom 2.2s ease-out forwards;
+        @keyframes streak-flicker {
+          0% {
+            opacity: 0.7;
+          }
+          100% {
+            opacity: 1;
+          }
         }
-        .animate-shine {
-          animation: shine 1.5s ease-in-out 0.3s forwards;
+        @keyframes glow-pulse {
+          0% {
+            transform: scale(0.5);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(3);
+            opacity: 0;
+          }
         }
       `}</style>
     </div>
