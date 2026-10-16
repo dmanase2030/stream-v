@@ -6,6 +6,8 @@ import WatchlistButton from '@/components/WatchlistButton';
 import WatchSection from '@/components/WatchSection';
 import { MovieDetail } from '@/types';
 
+export const runtime = 'edge';
+
 interface Props {
   params: Promise<{ slug: string[] }>;
   searchParams: Promise<{ s?: string; e?: string }>;

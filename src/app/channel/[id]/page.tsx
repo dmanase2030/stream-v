@@ -1,6 +1,8 @@
 import { fetchChannels } from '@/lib/channels';
 import ChannelPlayer from '@/components/ChannelPlayer';
 
+export const runtime = 'edge';
+
 interface Props {
   params: Promise<{ id: string }>;
 }

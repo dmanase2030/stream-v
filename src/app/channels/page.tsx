@@ -1,6 +1,8 @@
 import { fetchChannels } from '@/lib/channels';
 import ChannelGrid from '@/components/ChannelGrid';
 
+export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 
 export const metadata = {

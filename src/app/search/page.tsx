@@ -2,6 +2,8 @@ import { searchMulti, getMovieGenres, getTVGenres } from '@/lib/tmdb';
 import ContentCard from '@/components/ContentCard';
 import Link from 'next/link';
 
+export const runtime = 'edge';
+
 export const metadata = { title: 'Search - SAHND+' };
 
 interface Props {

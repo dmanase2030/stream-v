@@ -1,6 +1,8 @@
 import { fetchMyTVMovie } from '@/lib/mytvMovies';
 import MyTVMoviePlayer from './MyTVMoviePlayer';
 
+export const runtime = 'edge';
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }

@@ -2,6 +2,8 @@ import { getMoviesByGenre, getTVByGenre, getMovieGenres, getTVGenres } from '@/l
 import ContentCard from '@/components/ContentCard';
 import GenreList from '@/components/GenreList';
 
+export const runtime = 'edge';
+
 interface Props {
   params: Promise<{ id: string }>;
 }

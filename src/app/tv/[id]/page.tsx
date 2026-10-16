@@ -7,6 +7,8 @@ import WatchlistButton from '@/components/WatchlistButton';
 import SeasonSelector from '@/components/SeasonSelector';
 import SmartWatchButton from '@/components/SmartWatchButton';
 
+export const runtime = 'edge';
+
 interface Props {
   params: Promise<{ id: string }>;
 }

@@ -5,6 +5,8 @@ import CastRow from '@/components/CastRow';
 import ContentRow from '@/components/ContentRow';
 import WatchlistButton from '@/components/WatchlistButton';
 
+export const runtime = 'edge';
+
 interface Props {
   params: Promise<{ id: string }>;
 }

@@ -3,6 +3,8 @@ import ContentRow from '@/components/ContentRow';
 import GenreList from '@/components/GenreList';
 import { TMDBResponse, Movie } from '@/types';
 
+export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Movies - SAHND+' };
 
