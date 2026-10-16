@@ -3,6 +3,7 @@ import { fetchMyTVMovies, fetchMyTVSeries } from '@/lib/mytvMovies';
 import HeroBanner from '@/components/HeroBanner';
 import ContentRow from '@/components/ContentRow';
 import Top10Row from '@/components/Top10Row';
+import LandscapeRow from '@/components/LandscapeRow';
 import ContinueWatchingRow, { HeroLastWatched } from '@/components/ContinueWatching';
 import { MyTVMovieRow, MyTVSeriesRow } from '@/components/MyTVContentRow';
 import { TMDBResponse, Movie } from '@/types';
@@ -55,6 +56,7 @@ export default async function HomePage() {
         <ContentRow title="Trending Now" movies={trending.results.slice(1, 20)} />
         <Top10Row title="Top 10 Movies Today" movies={topRatedMovies.results} type="movie" />
         <Top10Row title="Top 10 TV Shows Today" movies={topRatedTV.results} type="tv" />
+        <LandscapeRow title="Crowd Pleasers" movies={popularMovies.results.slice(0, 15)} type="movie" />
         <ContentRow title="Popular Movies" movies={popularMovies.results} type="movie" />
         <ContentRow title="Popular TV Shows" movies={popularTV.results} type="tv" />
         <ContentRow title="Top Rated Series" movies={topRatedTV.results} type="tv" />
