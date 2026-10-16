@@ -24,7 +24,7 @@ export default function ContentRow({ title, movies, type }: ContentRowProps) {
 
   const scroll = (direction: 'left' | 'right') => {
     if (!rowRef.current) return;
-    const scrollAmount = rowRef.current.clientWidth * 0.75;
+    const scrollAmount = rowRef.current.clientWidth * 0.8;
     rowRef.current.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
@@ -34,48 +34,50 @@ export default function ContentRow({ title, movies, type }: ContentRowProps) {
   if (!movies?.length) return null;
 
   return (
-    <div className="relative group/row mb-10 lg:mb-14">
-      {/* Section Title */}
-      <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white mb-4 lg:mb-6 px-6 sm:px-8 lg:px-14">
+    <div className="relative mb-8 lg:mb-10 group/row">
+      {/* Netflix-style section title */}
+      <h2 className="text-white text-lg lg:text-xl font-medium mb-3 px-[4%] hover:text-white/70 transition-colors cursor-pointer inline-block">
         {title}
+        <span className="inline-block ml-2 text-xs text-[#54b9c5] opacity-0 group-hover/row:opacity-100 transition-opacity">
+          Explore All ›
+        </span>
       </h2>
 
       <div className="relative">
-        {/* Left Arrow */}
+        {/* Left chevron - Netflix style */}
         {showLeft && (
           <button
             onClick={() => scroll('left')}
-            className="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 hover:bg-black/80 border border-white/10"
+            className="absolute left-0 top-0 bottom-0 z-20 w-[4%] min-w-[40px] bg-[#141414]/70 hover:bg-[#141414]/90 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
+            aria-label="Scroll left"
           >
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
         )}
 
-        {/* Cards */}
+        {/* Cards - Netflix spacing */}
         <div
           ref={rowRef}
           onScroll={handleScroll}
-          className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar px-6 sm:px-8 lg:px-14 py-1"
+          className="flex gap-2 overflow-x-auto hide-scrollbar scroll-smooth px-[4%] pb-2"
         >
-          {movies.map((movie, index) => (
-            <ContentCard
-              key={movie.id}
-              movie={movie}
-              type={type || (movie.media_type === 'tv' || movie.first_air_date ? 'tv' : 'movie')}
-              index={index}
-            />
+          {movies.map((movie) => (
+            <div key={`${type}-${movie.id}`} className="flex-shrink-0 w-[160px] sm:w-[180px] lg:w-[200px]">
+              <ContentCard movie={movie} type={type} />
+            </div>
           ))}
         </div>
 
-        {/* Right Arrow */}
+        {/* Right chevron - Netflix style */}
         {showRight && (
           <button
             onClick={() => scroll('right')}
-            className="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-all duration-300 hover:bg-black/80 border border-white/10"
+            className="absolute right-0 top-0 bottom-0 z-20 w-[4%] min-w-[40px] bg-[#141414]/70 hover:bg-[#141414]/90 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
+            aria-label="Scroll right"
           >
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>

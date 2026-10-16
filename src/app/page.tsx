@@ -43,19 +43,20 @@ export default async function HomePage() {
   const heroMovie = trending.results[0];
 
   return (
-    <div className="page-enter">
+    <div className="bg-[#141414] min-h-screen">
       <HeroLastWatched
         fallbackHero={heroMovie ? <HeroBanner movie={heroMovie} /> : null}
       />
 
-      <div className="-mt-20 relative z-10">
+      {/* Netflix-style rows pulled up over hero */}
+      <div className="-mt-32 relative z-10 pb-10">
         <ContinueWatchingRow />
-        <ContentRow title="Trending Movies" movies={trending.results.slice(1, 20)} />
+        <ContentRow title="Trending Now" movies={trending.results.slice(1, 20)} />
         <ContentRow title="Popular Movies" movies={popularMovies.results} type="movie" />
-        <ContentRow title="Now Playing" movies={nowPlaying.results} type="movie" />
-        <ContentRow title="Top Rated" movies={topRatedMovies.results} type="movie" />
-        <ContentRow title="Popular Series" movies={popularTV.results} type="tv" />
+        <ContentRow title="Top 10 Movies Today" movies={topRatedMovies.results.slice(0, 10)} type="movie" />
+        <ContentRow title="Popular TV Shows" movies={popularTV.results} type="tv" />
         <ContentRow title="Top Rated Series" movies={topRatedTV.results} type="tv" />
+        <ContentRow title="Now Playing" movies={nowPlaying.results} type="movie" />
         <MyTVMovieRow title="MyTV+ Movies" movies={mytvMovies.movies.slice(0, 20)} />
         <MyTVSeriesRow title="MyTV+ Series" series={mytvSeries.series.slice(0, 20)} />
       </div>
