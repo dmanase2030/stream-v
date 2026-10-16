@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export const runtime = 'edge';
 
-export const metadata = { title: 'Search - SAHND+' };
+export const metadata = { title: 'Search - LUNIFLEX' };
 
 interface Props {
   searchParams: Promise<{ q?: string }>;

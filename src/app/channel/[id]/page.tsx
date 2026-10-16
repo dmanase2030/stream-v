@@ -13,9 +13,9 @@ export async function generateMetadata({ params }: Props) {
     const categories = await fetchChannels();
     const all = categories.flatMap((c) => c.channels);
     const ch = all.find((c) => c.id === id);
-    if (ch) return { title: `${ch.name} - Live TV - SAHND+` };
+    if (ch) return { title: `${ch.name} - Live TV - LUNIFLEX` };
   } catch {}
-  return { title: 'Live TV - SAHND+' };
+  return { title: 'Live TV - LUNIFLEX' };
 }
 
 export default async function ChannelPage({ params }: Props) {

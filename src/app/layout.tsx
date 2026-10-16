@@ -6,7 +6,7 @@ import { LayoutWrapper } from "@/components/LayoutWrapper";
 import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
-  title: "SAHND+ - Watch Movies & TV Shows Free",
+  title: "LUNIFLEX - Watch Movies & TV Shows Free",
   description: "Stream unlimited movies and TV shows in stunning quality. Your premium destination for entertainment.",
 };
 

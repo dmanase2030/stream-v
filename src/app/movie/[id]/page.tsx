@@ -14,7 +14,7 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
   const { id } = await params;
   const movie = await getMovieDetail(Number(id));
-  return { title: `${movie.title} - SAHND+` };
+  return { title: `${movie.title} - LUNIFLEX` };
 }
 
 export default async function MovieDetailPage({ params }: Props) {

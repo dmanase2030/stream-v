@@ -48,7 +48,7 @@ export default function Navbar() {
           <div className="flex items-center gap-10">
             <Link href="/" className="flex-shrink-0">
               <span className="text-[#E50914] font-black text-2xl tracking-tighter uppercase" style={{ fontFamily: 'Arial Black, sans-serif' }}>
-                SAHND+
+                LUNIFLEX
               </span>
             </Link>
 

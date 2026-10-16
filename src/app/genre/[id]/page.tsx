@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props) {
   const [movieGenres, tvGenres] = await Promise.all([getMovieGenres(), getTVGenres()]);
   const allGenres = [...movieGenres.genres, ...tvGenres.genres];
   const genre = allGenres.find((g) => g.id === genreId);
-  return { title: `${genre?.name || 'Genre'} - SAHND+` };
+  return { title: `${genre?.name || 'Genre'} - LUNIFLEX` };
 }
 
 export default async function GenrePage({ params }: Props) {
