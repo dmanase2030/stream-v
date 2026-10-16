@@ -8,16 +8,18 @@ import SeasonSelector from '@/components/SeasonSelector';
 import SmartWatchButton from '@/components/SmartWatchButton';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const show = await getTVDetail(Number(params.id));
+  const { id } = await params;
+  const show = await getTVDetail(Number(id));
   return { title: `${show.name} - SAHND+` };
 }
 
 export default async function TVDetailPage({ params }: Props) {
-  const show = await getTVDetail(Number(params.id));
+  const { id } = await params;
+  const show = await getTVDetail(Number(id));
   const backdrop = getBackdropUrl(show.backdrop_path);
   const year = show.first_air_date?.slice(0, 4);
   const title = show.name || show.title;

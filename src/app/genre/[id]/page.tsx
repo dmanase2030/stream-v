@@ -3,11 +3,12 @@ import ContentCard from '@/components/ContentCard';
 import GenreList from '@/components/GenreList';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const genreId = Number(params.id);
+  const { id } = await params;
+  const genreId = Number(id);
   const [movieGenres, tvGenres] = await Promise.all([getMovieGenres(), getTVGenres()]);
   const allGenres = [...movieGenres.genres, ...tvGenres.genres];
   const genre = allGenres.find((g) => g.id === genreId);
@@ -15,7 +16,8 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function GenrePage({ params }: Props) {
-  const genreId = Number(params.id);
+  const { id } = await params;
+  const genreId = Number(id);
   const [movies, tvShows, movieGenres, tvGenres] = await Promise.all([
     getMoviesByGenre(genreId),
     getTVByGenre(genreId),

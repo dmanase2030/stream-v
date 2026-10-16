@@ -6,16 +6,18 @@ import ContentRow from '@/components/ContentRow';
 import WatchlistButton from '@/components/WatchlistButton';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props) {
-  const movie = await getMovieDetail(Number(params.id));
+  const { id } = await params;
+  const movie = await getMovieDetail(Number(id));
   return { title: `${movie.title} - SAHND+` };
 }
 
 export default async function MovieDetailPage({ params }: Props) {
-  const movie = await getMovieDetail(Number(params.id));
+  const { id } = await params;
+  const movie = await getMovieDetail(Number(id));
   const backdrop = getBackdropUrl(movie.backdrop_path);
   const year = movie.release_date?.slice(0, 4);
   const hours = movie.runtime ? Math.floor(movie.runtime / 60) : 0;

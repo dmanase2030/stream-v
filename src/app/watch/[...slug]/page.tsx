@@ -7,20 +7,21 @@ import WatchSection from '@/components/WatchSection';
 import { MovieDetail } from '@/types';
 
 interface Props {
-  params: { slug: string[] };
-  searchParams: { s?: string; e?: string };
+  params: Promise<{ slug: string[] }>;
+  searchParams: Promise<{ s?: string; e?: string }>;
 }
 
 export async function generateMetadata({ params, searchParams }: Props) {
-  const [type, id] = params.slug;
+  const [{ slug }, sp] = await Promise.all([params, searchParams]);
+  const [type, id] = slug;
   try {
     if (type === 'movie') {
       const movie = await getMovieDetail(Number(id));
       return { title: `Watch ${movie.title} - SAHND+` };
     } else {
       const show = await getTVDetail(Number(id));
-      const s = searchParams.s || '1';
-      const e = searchParams.e || '1';
+      const s = sp.s || '1';
+      const e = sp.e || '1';
       return { title: `Watch ${show.name} S${s}E${e} - SAHND+` };
     }
   } catch {
@@ -29,11 +30,12 @@ export async function generateMetadata({ params, searchParams }: Props) {
 }
 
 export default async function WatchPage({ params, searchParams }: Props) {
-  const [type, id] = params.slug;
+  const [{ slug }, sp] = await Promise.all([params, searchParams]);
+  const [type, id] = slug;
   const mediaType = type as 'movie' | 'tv';
   const tmdbId = Number(id);
-  const season = searchParams.s ? Number(searchParams.s) : undefined;
-  const episode = searchParams.e ? Number(searchParams.e) : undefined;
+  const season = sp.s ? Number(sp.s) : undefined;
+  const episode = sp.e ? Number(sp.e) : undefined;
 
   let detail: MovieDetail;
   try {
