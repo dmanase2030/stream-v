@@ -6,9 +6,12 @@ export default function LoadingScreen() {
   const [visible, setVisible] = useState(true);
   const [phase, setPhase] = useState<'logo' | 'streaks' | 'fade'>('logo');
   const audioRef = useRef<AudioContext | null>(null);
+  const soundPlayedRef = useRef(false);
 
   // Synthesized "ta-dum" style two-tone chime (original, not Netflix's copyrighted sound)
   const playTadum = () => {
+    if (soundPlayedRef.current) return;
+    soundPlayedRef.current = true;
     try {
       const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       audioRef.current = ctx;
@@ -47,8 +50,15 @@ export default function LoadingScreen() {
       return;
     }
 
-    // Try to play sound (may be blocked until user interaction)
+    // Try to play sound immediately (works if user interacted before in this tab)
     playTadum();
+
+    // Fallback: play on first tap/click (mobile autoplay policy)
+    const playOnInteract = () => {
+      if (!soundPlayedRef.current) playTadum();
+    };
+    window.addEventListener('pointerdown', playOnInteract, { once: true });
+    window.addEventListener('touchstart', playOnInteract, { once: true });
 
     // Phase 1: Logo (0 - 1.8s) - red L scales up like Netflix N
     // Phase 2: Streaks (1.8s - 3.2s) - L explodes into colorful light streaks
@@ -64,6 +74,8 @@ export default function LoadingScreen() {
       clearTimeout(streakTimer);
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
+      window.removeEventListener('pointerdown', playOnInteract);
+      window.removeEventListener('touchstart', playOnInteract);
       audioRef.current?.close().catch(() => {});
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
