@@ -6,6 +6,8 @@ import ContinueWatchingRow, { HeroLastWatched } from '@/components/ContinueWatch
 import { MyTVMovieRow, MyTVSeriesRow } from '@/components/MyTVContentRow';
 import { TMDBResponse, Movie } from '@/types';
 
+export const runtime = 'edge';
+
 export const dynamic = 'force-dynamic';
 
 const empty: TMDBResponse<Movie> = { page: 1, results: [], total_pages: 0, total_results: 0 };

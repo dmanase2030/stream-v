@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 export const maxDuration = 15;
 
 const VIXSRC_BASE = 'https://vixsrc.to';
