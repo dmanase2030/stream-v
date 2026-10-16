@@ -24,7 +24,7 @@ async function getKey(): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const secret = getSecret();
   const keyData = enc.encode(secret.padEnd(32, '0').slice(0, 32));
-  return crypto.subtle.importKey('raw', keyData, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
+  return crypto.subtle.importKey('raw', keyData.buffer as ArrayBuffer, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
 }
 
 function b64urlEncode(data: Uint8Array | string): string {
@@ -35,7 +35,9 @@ function b64urlEncode(data: Uint8Array | string): string {
 function b64urlDecode(s: string): Uint8Array {
   const b64 = s.replace(/-/g, '+').replace(/_/g, '/');
   const bin = atob(b64);
-  return Uint8Array.from(bin, c => c.charCodeAt(0));
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return arr;
 }
 
 export async function createSessionToken(user: DiscordUser): Promise<string> {
@@ -48,7 +50,7 @@ export async function createSessionToken(user: DiscordUser): Promise<string> {
   };
   const payloadB64 = b64urlEncode(JSON.stringify(payload));
   const key = await getKey();
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payloadB64}`));
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${header}.${payloadB64}`).buffer as ArrayBuffer);
   return `${header}.${payloadB64}.${b64urlEncode(new Uint8Array(sig))}`;
 }
 
@@ -57,7 +59,14 @@ export async function verifySessionToken(token: string): Promise<SessionData | n
     const [header, payloadB64, sigB64] = token.split('.');
     if (!header || !payloadB64 || !sigB64) return null;
     const key = await getKey();
-    const valid = await crypto.subtle.verify('HMAC', key, b64urlDecode(sigB64), new TextEncoder().encode(`${header}.${payloadB64}`));
+    const sigBytes = b64urlDecode(sigB64);
+    const dataBytes = new TextEncoder().encode(`${header}.${payloadB64}`);
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      sigBytes.buffer as ArrayBuffer,
+      dataBytes.buffer as ArrayBuffer
+    );
     if (!valid) return null;
     const payload: SessionData = JSON.parse(new TextDecoder().decode(b64urlDecode(payloadB64)));
     if (payload.exp < Math.floor(Date.now() / 1000)) return null;
