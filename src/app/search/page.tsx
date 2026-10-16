@@ -5,11 +5,12 @@ import Link from 'next/link';
 export const metadata = { title: 'Search - SAHND+' };
 
 interface Props {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const query = searchParams.q || '';
+  const { q } = await searchParams;
+  const query = q || '';
   const results = query ? await searchMulti(query) : null;
   const [movieGenres, tvGenres] = await Promise.all([getMovieGenres(), getTVGenres()]);
   const allGenres = [...movieGenres.genres, ...tvGenres.genres].filter(
