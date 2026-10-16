@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import UserMenu from './UserMenu';
+import ProfileSwitcher from './ProfileSwitcher';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -16,17 +17,10 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Hide navbar entirely on channel player pages
   const isChannelPage = pathname.startsWith('/channel/');
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -35,13 +29,7 @@ export default function Navbar() {
   if (isChannelPage) return null;
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-[#141414]'
-          : 'bg-gradient-to-b from-black/70 to-transparent'
-      }`}
-    >
+    <nav className="absolute top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/70 to-transparent">
       <div className="px-[4%]">
         <div className="flex items-center justify-between h-[68px]">
           {/* Netflix-style logo + Nav Links */}
@@ -72,6 +60,7 @@ export default function Navbar() {
           {/* Right Side - Netflix style */}
           <div className="flex items-center gap-4">
             <SearchBar />
+            <ProfileSwitcher />
             <UserMenu />
             {/* Mobile Toggle */}
             <button

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import ProfileGate from "@/components/ProfileGate";
 import Footer from "@/components/Footer";
 import { LayoutWrapper } from "@/components/LayoutWrapper";
 import { Analytics } from '@vercel/analytics/next';
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="noise antialiased min-h-screen">
         <Navbar />
+        <ProfileGate />
         <main className="min-h-screen">{children}</main>
         <LayoutWrapper>
           <Footer />
