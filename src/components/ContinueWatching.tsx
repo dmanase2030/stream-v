@@ -116,7 +116,7 @@ export default function ContinueWatchingRow() {
                   <div className="relative aspect-video rounded-md overflow-hidden bg-white/5 transition-transform duration-300 group-hover/card:scale-[1.04] group-hover/card:z-10 group-hover/card:shadow-2xl">
                     <Image src={imgUrl} alt={item.title} fill className="object-cover" sizes="300px" />
                     <div className="absolute top-1.5 left-1.5 z-10">
-                      <span className="text-[#E50914] font-black text-sm leading-none drop-shadow-md" style={{ fontFamily: 'Arial Black, sans-serif' }}>R</span>
+                      <span className="text-[#E50914] font-black text-sm leading-none drop-shadow-md" style={{ fontFamily: 'Arial Black, sans-serif' }}>L</span>
                     </div>
                     {/* Netflix red progress bar */}
                     <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/20">

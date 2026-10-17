@@ -94,7 +94,6 @@ export const getResumeUrl = (item: WatchHistoryItem): string => {
 
 export const getContinueWatching = (): WatchHistoryItem[] => {
   return getWatchHistory()
-    .filter((h) => h.progress > 0 && (h.type === 'tv' || !h.completed))
     .sort((a, b) => b.timestamp - a.timestamp)
     .slice(0, 20);
 };
