@@ -61,6 +61,7 @@ export default function HlsVideoPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [showEpisodePanel, setShowEpisodePanel] = useState(false);
+  const [showSourcePanel, setShowSourcePanel] = useState(false);
 
   const savedTime = getSavedTime(id, type, season, episode);
   const effectiveDuration = duration > 0 ? duration : (runtime || (type === 'tv' ? 45 : 120)) * 60;
@@ -419,6 +420,8 @@ export default function HlsVideoPlayer({
           onSeek={handleChromeSeek}
           showEpisodesButton={type === 'tv' && !!seasons}
           onOpenEpisodes={() => setShowEpisodePanel(true)}
+          showSourceButton={mode === 'embed'}
+          onOpenSources={() => setShowSourcePanel(true)}
         />
 
         {/* Episode panel - slide in from right */}
@@ -457,22 +460,94 @@ export default function HlsVideoPlayer({
           </>
         )}
 
-        {/* Source switcher - minimal top right in cinema */}
-        {mode === 'embed' && !isLoading && (
-          <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-40">
-            <select
-              value={sourceIndex}
-              onChange={(e) => handleSourceChange(Number(e.target.value))}
-              className="bg-black/60 text-white/80 text-xs rounded px-2 py-1.5 border border-white/10 backdrop-blur-sm"
-            >
-              {streamingSources.map((s, i) => (
-                <option key={s.name} value={i} className="bg-black">
-                  {s.name}{failedSources.has(i) ? ' (failed)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Source picker panel - slide in from right */}
+        {showSourcePanel && (
+          <>
+            <div
+              className="absolute inset-0 z-40 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowSourcePanel(false)}
+            />
+            <div className="absolute top-0 right-0 bottom-0 z-50 w-full max-w-sm bg-[#141414] border-l border-white/10 shadow-2xl flex flex-col animate-slide-in-right">
+              <div className="flex items-center justify-between p-4 border-b border-white/10">
+                <div>
+                  <h2 className="text-white font-semibold">Sources</h2>
+                  <p className="text-white/50 text-xs">Pick one if the current isn't working</p>
+                </div>
+                <button
+                  onClick={() => setShowSourcePanel(false)}
+                  className="p-2 text-white/60 hover:text-white transition"
+                  aria-label="Close sources"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-3 space-y-1.5">
+                {streamingSources.map((source, i) => {
+                  const isFailed = failedSources.has(i);
+                  const isActive = mode === 'embed' && i === sourceIndex;
+                  const isLoadingSource = isActive && embedLoading;
+                  return (
+                    <button
+                      key={source.name}
+                      onClick={() => {
+                        if (mode !== 'embed') setMode('embed');
+                        handleSourceChange(i);
+                        setShowSourcePanel(false);
+                      }}
+                      className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-left transition-all ${
+                        isActive
+                          ? 'bg-white/[0.08] ring-1 ring-white/15'
+                          : 'hover:bg-white/[0.04]'
+                      }`}
+                    >
+                      <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                        isLoadingSource ? 'bg-yellow-500 animate-pulse'
+                        : isActive ? 'bg-emerald-500'
+                        : isFailed ? 'bg-white/10'
+                        : 'bg-white/20'
+                      }`} />
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${isActive ? 'text-white' : isFailed ? 'text-white/25' : 'text-white/70'}`}>
+                          {source.name}
+                        </p>
+                        <p className="text-[11px] text-white/30">
+                          {isActive ? (embedLoading ? 'Connecting...' : 'Playing')
+                           : isFailed ? 'Failed — tap to retry'
+                           : 'Tap to switch'}
+                        </p>
+                      </div>
+                      {isLoadingSource && (
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin flex-shrink-0" />
+                      )}
+                      {isActive && !embedLoading && (
+                        <svg className="w-5 h-5 text-emerald-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
+                  );
+                })}
+                {/* SAHND+ native option */}
+                <button
+                  onClick={() => { switchToHls(); setShowSourcePanel(false); }}
+                  className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-left transition-all ${
+                    mode === 'hls' ? 'bg-[#E50914]/15 ring-1 ring-[#E50914]/30' : 'hover:bg-white/[0.04]'
+                  }`}
+                >
+                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${mode === 'hls' ? (hlsLoading ? 'bg-yellow-500 animate-pulse' : 'bg-[#E50914]') : 'bg-white/20'}`} />
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium ${mode === 'hls' ? 'text-white' : 'text-white/70'}`}>LUNIFLEX Native</p>
+                    <p className="text-[11px] text-white/30">{mode === 'hls' ? (hlsLoading ? 'Loading...' : 'Playing') : 'Tap to switch'}</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </>
         )}
+
+
       </div>
     );
   }

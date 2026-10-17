@@ -17,6 +17,8 @@ interface NetflixChromeProps {
   onSeek: (time: number) => void;
   showEpisodesButton?: boolean;
   onOpenEpisodes?: () => void;
+  showSourceButton?: boolean;
+  onOpenSources?: () => void;
 }
 
 export default function NetflixChrome({
@@ -32,6 +34,8 @@ export default function NetflixChrome({
   onSeek,
   showEpisodesButton = false,
   onOpenEpisodes,
+  showSourceButton = false,
+  onOpenSources,
 }: NetflixChromeProps) {
   const router = useRouter();
   const [showControls, setShowControls] = useState(true);
@@ -289,6 +293,13 @@ export default function NetflixChrome({
 
             <div className="flex items-center gap-4">
               <span className="text-white text-sm font-medium hidden md:block truncate max-w-[200px]">{title}</span>
+              {showSourceButton && onOpenSources && (
+                <button onClick={() => { onOpenSources(); resetHideTimer(); }} className="text-white hover:text-white/70 transition" aria-label="Sources">
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                  </svg>
+                </button>
+              )}
               {showEpisodesButton && onOpenEpisodes && (
                 <button onClick={() => { onOpenEpisodes(); resetHideTimer(); }} className="text-white hover:text-white/70 transition" aria-label="Episodes">
                   <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
