@@ -6,14 +6,6 @@ import { usePathname } from 'next/navigation';
 import SearchBar from './SearchBar';
 import UserMenu from './UserMenu';
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/movies', label: 'Movies' },
-  { href: '/tv', label: 'TV Shows' },
-  { href: '/channels', label: 'Live TV' },
-  { href: '/mytv', label: 'My List' },
-];
-
 export default function Navbar() {
   const pathname = usePathname();
 
@@ -34,18 +26,23 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <div className="hidden lg:flex items-center gap-5">
-              {navLinks.map((link) => (
+            <div className="hidden lg:flex items-center gap-1">
+              {[
+                { href: '/', label: 'Home' },
+                { href: '/tv', label: 'Shows' },
+                { href: '/movies', label: 'Movies' },
+                { href: '/mytv', label: 'My List' },
+              ].map((tab) => (
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-[13px] transition-colors duration-200 ${
-                    pathname === link.href
-                      ? 'text-white font-semibold'
-                      : 'text-[#e5e5e5]/80 hover:text-[#b3b3b3]'
+                  key={tab.href}
+                  href={tab.href}
+                  className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap transition ${
+                    pathname === tab.href
+                      ? 'bg-white/15 text-white font-medium'
+                      : 'text-white/60 hover:text-white'
                   }`}
                 >
-                  {link.label}
+                  {tab.label}
                 </Link>
               ))}
             </div>
