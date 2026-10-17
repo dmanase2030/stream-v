@@ -39,6 +39,7 @@ export default function HlsVideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const lastSaveRef = useRef(0);
   const watchTimerRef = useRef<NodeJS.Timeout>();
 
@@ -364,10 +365,33 @@ export default function HlsVideoPlayer({
     else router.back();
   };
 
+  // Fullscreen that actually works: native video fullscreen on iPhone (webkitEnterFullscreen),
+  // standard Fullscreen API everywhere else
+  const handleToggleFullscreen = useCallback(() => {
+    // HLS mode: use the native video element - webkitEnterFullscreen works on iPhone
+    if (mode === 'hls' && videoRef.current) {
+      const video = videoRef.current as any;
+      if (typeof video.webkitEnterFullscreen === 'function') {
+        video.webkitEnterFullscreen();
+        return;
+      }
+    }
+    // Embed mode or fallback: standard Fullscreen API on the player container
+    const el = containerRef.current as any;
+    if (!el) return;
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else if (typeof el.requestFullscreen === 'function') {
+      el.requestFullscreen().catch(() => {});
+    } else if (typeof el.webkitRequestFullscreen === 'function') {
+      el.webkitRequestFullscreen();
+    }
+  }, [mode]);
+
   // Cinema mode: fullscreen Netflix experience
   if (cinemaMode) {
     return (
-      <div id="cinema-player" className="fixed inset-0 z-[100] bg-black">
+      <div id="cinema-player" ref={containerRef} className="fixed inset-0 z-[100] bg-black">
         {/* Video layer */}
         <div className="absolute inset-0">
           {mode === 'hls' && (
@@ -432,6 +456,7 @@ export default function HlsVideoPlayer({
           onOpenEpisodes={() => setShowEpisodePanel(true)}
           showSourceButton={mode === 'embed'}
           onOpenSources={() => setShowSourcePanel(true)}
+          onToggleFullscreen={handleToggleFullscreen}
         />
 
         {/* Episode panel - slide in from right */}

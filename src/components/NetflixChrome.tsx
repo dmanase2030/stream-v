@@ -19,6 +19,7 @@ interface NetflixChromeProps {
   onOpenEpisodes?: () => void;
   showSourceButton?: boolean;
   onOpenSources?: () => void;
+  onToggleFullscreen?: () => void;
 }
 
 export default function NetflixChrome({
@@ -36,6 +37,7 @@ export default function NetflixChrome({
   onOpenEpisodes,
   showSourceButton = false,
   onOpenSources,
+  onToggleFullscreen,
 }: NetflixChromeProps) {
   const router = useRouter();
   const [showControls, setShowControls] = useState(false);
@@ -174,6 +176,13 @@ export default function NetflixChrome({
               <button onClick={() => { onOpenSources(); resetHideTimer(); }} className="p-2 text-white hover:text-white/70 transition flex-shrink-0" aria-label="Sources">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                </svg>
+              </button>
+            )}
+            {onToggleFullscreen && (
+              <button onClick={() => { onToggleFullscreen(); resetHideTimer(); }} className="p-2 text-white hover:text-white/70 transition flex-shrink-0" aria-label="Fullscreen">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                 </svg>
               </button>
             )}
