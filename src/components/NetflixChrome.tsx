@@ -38,7 +38,7 @@ export default function NetflixChrome({
   onOpenSources,
 }: NetflixChromeProps) {
   const router = useRouter();
-  const [showControls, setShowControls] = useState(true);
+  const [showControls, setShowControls] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [showNextCard, setShowNextCard] = useState(false);
@@ -63,11 +63,10 @@ export default function NetflixChrome({
   }, []);
 
   useEffect(() => {
-    resetHideTimer();
     return () => {
       if (hideTimer.current) clearTimeout(hideTimer.current);
     };
-  }, [resetHideTimer]);
+  }, []);
 
   // Hide chrome when the embed player goes fullscreen (its own fullscreen button)
   useEffect(() => {
