@@ -125,27 +125,29 @@ export default function NetflixChrome({
 
   return (
     <div
-      className="absolute inset-0 z-30"
+      className={`absolute inset-0 z-30 ${isEmbed ? 'pointer-events-none' : ''}`}
       onMouseMove={resetHideTimer}
       onTouchStart={resetHideTimer}
     >
-      {/* Click to toggle controls (not on buttons) */}
-      <div
-        className="absolute inset-0"
-        onClick={(e) => {
-          if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-progress]')) return;
-          if (showControls) {
-            setShowControls(false);
-            if (hideTimer.current) clearTimeout(hideTimer.current);
-          } else {
-            resetHideTimer();
-          }
-        }}
-      />
+      {/* Click to toggle controls (not on buttons) - HLS mode only so embed taps pass through */}
+      {!isEmbed && (
+        <div
+          className="absolute inset-0"
+          onClick={(e) => {
+            if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-progress]')) return;
+            if (showControls) {
+              setShowControls(false);
+              if (hideTimer.current) clearTimeout(hideTimer.current);
+            } else {
+              resetHideTimer();
+            }
+          }}
+        />
+      )}
 
       {/* Top bar - back + title */}
       <div
-        className={`absolute top-0 left-0 right-0 transition-all duration-300 ${
+        className={`absolute top-0 left-0 right-0 transition-all duration-300 ${isEmbed ? 'pointer-events-auto' : ''} ${
           showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
@@ -195,7 +197,7 @@ export default function NetflixChrome({
 
       {/* Next episode card - Netflix style bottom right */}
       {showNextCard && nextEpisodeUrl && (
-        <div className="absolute bottom-24 right-4 sm:right-8 z-40 animate-fade-up">
+        <div className="absolute bottom-24 right-4 sm:right-8 z-40 animate-fade-up pointer-events-auto">
           <div className="bg-[#181818] rounded-lg overflow-hidden shadow-2xl w-64 sm:w-72">
             <div className="p-4">
               <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Up Next</p>
@@ -216,7 +218,7 @@ export default function NetflixChrome({
 
       {/* Bottom control bar */}
       <div
-        className={`absolute bottom-0 left-0 right-0 transition-all duration-300 ${
+        className={`absolute bottom-0 left-0 right-0 transition-all duration-300 ${isEmbed ? 'pointer-events-auto' : ''} ${
           showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
       >
