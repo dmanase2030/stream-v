@@ -295,9 +295,7 @@ export default function NetflixChrome({
                   </span>
                 </>
               )}
-              {isEmbed && (
-                <span className="text-white/60 text-sm">Embed Player</span>
-              )}
+
             </div>
 
             <div className="flex items-center gap-4">
