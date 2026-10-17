@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import SearchBar from './SearchBar';
 import UserMenu from './UserMenu';
-import ProfileSwitcher from './ProfileSwitcher';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -60,7 +59,6 @@ export default function Navbar() {
           {/* Right Side - Netflix style */}
           <div className="flex items-center gap-4">
             <SearchBar />
-            <ProfileSwitcher />
             <UserMenu />
             {/* Mobile Toggle */}
             <button

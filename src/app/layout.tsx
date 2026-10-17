@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import ProfileGate from "@/components/ProfileGate";
 import LoadingScreen from "@/components/LoadingScreen";
 import Footer from "@/components/Footer";
 import { LayoutWrapper } from "@/components/LayoutWrapper";
@@ -22,7 +21,6 @@ export default function RootLayout({
       <body className="noise antialiased min-h-screen">
         <Navbar />
         <LoadingScreen />
-        <ProfileGate />
         <main className="min-h-screen">{children}</main>
         <LayoutWrapper>
           <Footer />
