@@ -50,6 +50,7 @@ export default function WatchSection({
           autoNext={autoNext}
           cinemaMode={cinemaMode}
           onBack={onBack}
+          seasons={seasons}
         />
       </div>
 

@@ -15,6 +15,8 @@ interface NetflixChromeProps {
   currentTime: number;
   duration: number;
   onSeek: (time: number) => void;
+  showEpisodesButton?: boolean;
+  onOpenEpisodes?: () => void;
 }
 
 export default function NetflixChrome({
@@ -28,6 +30,8 @@ export default function NetflixChrome({
   currentTime,
   duration,
   onSeek,
+  showEpisodesButton = false,
+  onOpenEpisodes,
 }: NetflixChromeProps) {
   const router = useRouter();
   const [showControls, setShowControls] = useState(true);
@@ -285,6 +289,13 @@ export default function NetflixChrome({
 
             <div className="flex items-center gap-4">
               <span className="text-white text-sm font-medium hidden md:block truncate max-w-[200px]">{title}</span>
+              {showEpisodesButton && onOpenEpisodes && (
+                <button onClick={() => { onOpenEpisodes(); resetHideTimer(); }} className="text-white hover:text-white/70 transition" aria-label="Episodes">
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
+                </button>
+              )}
               <button onClick={toggleFullscreen} className="text-white hover:text-white/70 transition" aria-label="Fullscreen">
                 <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />

@@ -7,6 +7,8 @@ import { fetchStream, StreamResult } from '@/lib/streamApi';
 import { streamingSources } from '@/lib/sources';
 import { addToHistory, markAsWatched, updateProgress, getSavedTime } from '@/lib/history';
 import NetflixChrome from '@/components/NetflixChrome';
+import EpisodeSidebar from '@/components/EpisodeSidebar';
+import { Season } from '@/types';
 
 interface HlsPlayerProps {
   type: 'movie' | 'tv';
@@ -24,13 +26,14 @@ interface HlsPlayerProps {
   autoNext?: boolean;
   cinemaMode?: boolean;
   onBack?: () => void;
+  seasons?: Season[];
 }
 
 type PlayerMode = 'hls' | 'embed';
 
 export default function HlsVideoPlayer({
   type, id, season, episode, title, backdrop, posterPath, overview, voteAverage,
-  runtime, nextEpisodeUrl, nextEpisodeLabel, autoNext = true, cinemaMode = false, onBack,
+  runtime, nextEpisodeUrl, nextEpisodeLabel, autoNext = true, cinemaMode = false, onBack, seasons,
 }: HlsPlayerProps) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -57,6 +60,7 @@ export default function HlsVideoPlayer({
   const [hasNavigated, setHasNavigated] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [showEpisodePanel, setShowEpisodePanel] = useState(false);
 
   const savedTime = getSavedTime(id, type, season, episode);
   const effectiveDuration = duration > 0 ? duration : (runtime || (type === 'tv' ? 45 : 120)) * 60;
@@ -413,7 +417,45 @@ export default function HlsVideoPlayer({
           currentTime={currentTime}
           duration={duration > 0 ? duration : effectiveDuration}
           onSeek={handleChromeSeek}
+          showEpisodesButton={type === 'tv' && !!seasons}
+          onOpenEpisodes={() => setShowEpisodePanel(true)}
         />
+
+        {/* Episode panel - slide in from right */}
+        {type === 'tv' && seasons && showEpisodePanel && (
+          <>
+            <div
+              className="absolute inset-0 z-40 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowEpisodePanel(false)}
+            />
+            <div className="absolute top-0 right-0 bottom-0 z-50 w-full max-w-md bg-[#141414] border-l border-white/10 shadow-2xl flex flex-col animate-slide-in-right">
+              <div className="flex items-center justify-between p-4 border-b border-white/10">
+                <div>
+                  <h2 className="text-white font-semibold">{title}</h2>
+                  <p className="text-white/50 text-xs">Episodes</p>
+                </div>
+                <button
+                  onClick={() => setShowEpisodePanel(false)}
+                  className="p-2 text-white/60 hover:text-white transition"
+                  aria-label="Close episodes"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="flex-1 overflow-hidden p-4">
+                <EpisodeSidebar
+                  tvId={id}
+                  currentSeason={season || 1}
+                  currentEpisode={episode || 1}
+                  seasons={seasons}
+                  showTitle={title || ''}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Source switcher - minimal top right in cinema */}
         {mode === 'embed' && !isLoading && (
