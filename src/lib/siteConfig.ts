@@ -53,6 +53,7 @@ export const HOME_ROWS = [
   { id: 'continue', label: 'Continue Watching' },
   { id: 'mylist', label: 'My List' },
   { id: 'recommendations', label: 'Because You Watched' },
+  { id: 'genres', label: 'Genre Rows' },
   { id: 'trending', label: 'Trending Now' },
   { id: 'top10movies', label: 'Top 10 Movies Today' },
   { id: 'top10tv', label: 'Top 10 TV Shows Today' },
