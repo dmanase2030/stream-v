@@ -18,6 +18,8 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
   const [inList, setInList] = useState(false);
   const [trailerKey, setTrailerKey] = useState<string | null>(null);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [cast, setCast] = useState<any[]>([]);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (movie) {
@@ -25,6 +27,13 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
       setInList(isInMyList(movie.id));
       setShowTrailer(false);
       setTrailerKey(null);
+      setCast([]);
+      setCopied(false);
+      try {
+        if (localStorage.getItem('luniflex_trailer_autoplay') === '1') {
+          setShowTrailer(true);
+        }
+      } catch {}
       fetch(`https://api.themoviedb.org/3/${type}/${movie.id}/videos?api_key=3ea9ba88a81be0f283362871b7f6b19e`)
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => {
@@ -33,6 +42,12 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
             vids.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer') ||
             vids.find((v: any) => v.site === 'YouTube');
           if (trailer) setTrailerKey(trailer.key);
+        })
+        .catch(() => {});
+      fetch(`https://api.themoviedb.org/3/${type}/${movie.id}/credits?api_key=3ea9ba88a81be0f283362871b7f6b19e`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (d?.cast) setCast(d.cast.slice(0, 8));
         })
         .catch(() => {});
       document.body.style.overflow = 'hidden';
@@ -120,6 +135,24 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
                 </svg>
                 Play
               </Link>
+              <button
+                onClick={() => {
+                  const url = `${window.location.origin}/${type}/${movie.id}`;
+                  if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url).then(() => {
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }).catch(() => {});
+                  }
+                }}
+                className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white font-semibold px-5 py-2 rounded transition backdrop-blur-sm"
+                aria-label="Share"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                {copied ? 'Copied!' : 'Share'}
+              </button>
               {trailerKey && (
                 <button
                   onClick={() => setShowTrailer((s) => !s)}
@@ -164,6 +197,22 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
             <span className="border border-white/40 text-white/70 text-xs px-1.5 py-0.5">TV-MA</span>
           </div>
           <p className="text-white text-sm leading-relaxed mb-6">{movie.overview}</p>
+          {cast.length > 0 && (
+            <div className="mb-6">
+              <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Cast</p>
+              <div className="flex flex-wrap gap-2">
+                {cast.map((p: any) => (
+                  <Link
+                    key={p.id}
+                    href={`/person/${p.id}`}
+                    className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-full text-xs text-white/80 transition"
+                  >
+                    {p.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
           <Link
             href={`/${type}/${movie.id}`}
             className="inline-flex items-center text-white text-sm font-medium hover:underline"

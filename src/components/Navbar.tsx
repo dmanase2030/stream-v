@@ -31,6 +31,7 @@ export default function Navbar() {
                 { href: '/', label: 'Home' },
                 { href: '/tv', label: 'Shows' },
                 { href: '/movies', label: 'Movies' },
+                { href: '/new', label: 'New & Popular' },
                 { href: '/mytv', label: 'My List' },
               ].map((tab) => (
                 <Link
@@ -71,6 +72,7 @@ export default function Navbar() {
             { href: '/', label: 'Home' },
             { href: '/tv', label: 'Shows' },
             { href: '/movies', label: 'Movies' },
+            { href: '/new', label: 'New & Popular' },
             { href: '/mytv', label: 'My List' },
           ].map((tab) => (
             <Link

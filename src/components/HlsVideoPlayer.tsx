@@ -59,6 +59,9 @@ export default function HlsVideoPlayer({
   const triedHlsRef = useRef(false);
   const [failoverMsg, setFailoverMsg] = useState<string | null>(null);
   const [allFailed, setAllFailed] = useState(false);
+  const [showSkipIntro, setShowSkipIntro] = useState(false);
+  const lastTapRef = useRef<{ time: number; x: number } | null>(null);
+  const [seekFlash, setSeekFlash] = useState<{ dir: string; key: number } | null>(null);
 
   // Shared state
   const [showNextButton, setShowNextButton] = useState(false);
@@ -300,6 +303,43 @@ export default function HlsVideoPlayer({
     return () => window.removeEventListener('message', handleMessage);
   }, [mode, id, type, season, episode, effectiveDuration, triggerAt, nextEpisodeUrl, autoNext, hasNavigated, router]);
 
+  // Skip Intro: show during first 5 minutes of playback
+  useEffect(() => {
+    setShowSkipIntro(currentTime > 10 && currentTime < 300);
+  }, [currentTime]);
+
+  const skipIntro = () => {
+    const target = currentTime + 85;
+    if (mode === 'hls' && videoRef.current) {
+      videoRef.current.currentTime = target;
+    } else if (mode === 'embed' && iframeRef.current?.contentWindow) {
+      // Best-effort seek for embed players listening to commands
+      iframeRef.current.contentWindow.postMessage(
+        { type: 'PLAYER_COMMAND', data: { command: 'seek', time: target } },
+        '*'
+      );
+    }
+    setShowSkipIntro(false);
+  };
+
+  // Double-tap left/right to seek 10s (HLS mode)
+  const handleDoubleTap = (e: React.TouchEvent) => {
+    if (mode !== 'hls' || !videoRef.current) return;
+    const now = Date.now();
+    const x = e.touches[0]?.clientX ?? 0;
+    const last = lastTapRef.current;
+    if (last && now - last.time < 300) {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const dir = x < rect.left + rect.width / 2 ? -10 : 10;
+      videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime + dir);
+      setSeekFlash({ dir: dir > 0 ? 'forward' : 'back', key: now });
+      setTimeout(() => setSeekFlash(null), 600);
+      lastTapRef.current = null;
+    } else {
+      lastTapRef.current = { time: now, x };
+    }
+  };
+
   // Embed watchdog: if VixSrc never starts playing, fail over to HLS
   useEffect(() => {
     if (mode !== 'embed') return;
@@ -432,7 +472,7 @@ export default function HlsVideoPlayer({
   // Cinema mode: fullscreen Netflix experience
   if (cinemaMode) {
     return (
-      <div id="cinema-player" ref={containerRef} className="fixed inset-0 z-[100] bg-black">
+      <div id="cinema-player" ref={containerRef} className="fixed inset-0 z-[100] bg-black" onTouchStart={handleDoubleTap}>
         {/* Video layer */}
         <div className="absolute inset-0">
           {mode === 'hls' && (
@@ -511,6 +551,31 @@ export default function HlsVideoPlayer({
               >
                 Try Again
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Skip Intro button */}
+        {showSkipIntro && !allFailed && (
+          <button
+            onClick={skipIntro}
+            className="absolute bottom-28 right-4 sm:right-8 z-40 px-5 py-2.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white text-sm font-semibold rounded transition pointer-events-auto"
+          >
+            Skip Intro
+          </button>
+        )}
+
+        {/* Double-tap seek flash */}
+        {seekFlash && (
+          <div className={`absolute top-1/2 -translate-y-1/2 z-40 pointer-events-none ${seekFlash.dir === 'forward' ? 'right-8' : 'left-8'}`} key={seekFlash.key}>
+            <div className="w-16 h-16 rounded-full bg-black/60 flex items-center justify-center animate-ping-once">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                {seekFlash.dir === 'forward' ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7M19 19l-7-7 7-7" />
+                )}
+              </svg>
             </div>
           </div>
         )}

@@ -27,7 +27,14 @@ export default function WatchSection({
   type, id, season, episode, title, backdrop, posterPath, overview, voteAverage,
   runtime, nextEpisodeUrl, nextEpisodeLabel, seasons, cinemaMode = false, onBack,
 }: WatchSectionProps) {
-  const [autoNext, setAutoNext] = useState(true);
+  const [autoNext, setAutoNext] = useState(() => {
+    try {
+      const v = localStorage.getItem('luniflex_autoplay');
+      return v === null ? true : v === '1';
+    } catch {
+      return true;
+    }
+  });
   const isTV = type === 'tv';
 
   return (

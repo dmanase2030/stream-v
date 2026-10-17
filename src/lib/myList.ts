@@ -40,3 +40,9 @@ export function toggleMyList(movie: Movie): boolean {
   write([{ id, title, name, backdrop_path, poster_path, overview, vote_average, release_date, first_air_date, media_type: (movie as any).media_type || undefined } as Movie, ...list]);
   return true;
 }
+
+export const clearMyList = (): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(KEY);
+  window.dispatchEvent(new Event('luniflex-mylist-changed'));
+};

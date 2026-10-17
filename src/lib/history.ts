@@ -130,3 +130,17 @@ export const getLastWatchedEpisode = (tvId: number): { season: number; episode: 
   }
   return null;
 };
+
+export const removeFromHistory = (id: number, type: 'movie' | 'tv', season?: number, episode?: number): void => {
+  if (typeof window === 'undefined') return;
+  const history = getWatchHistory();
+  const filtered = history.filter(
+    (h) => !(h.id === id && h.type === type && h.season === season && h.episode === episode)
+  );
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
+};
+
+export const clearHistory = (): void => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem(HISTORY_KEY);
+};
