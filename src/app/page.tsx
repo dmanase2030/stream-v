@@ -1,11 +1,6 @@
 import { getTrending, getPopularMovies, getTopRatedMovies, getPopularTV, getTopRatedTV, getNowPlayingMovies } from '@/lib/tmdb';
 import { fetchMyTVMovies, fetchMyTVSeries } from '@/lib/mytvMovies';
-import HeroBanner from '@/components/HeroBanner';
-import ContentRow from '@/components/ContentRow';
-import Top10Row from '@/components/Top10Row';
-import LandscapeRow from '@/components/LandscapeRow';
-import ContinueWatchingRow, { HeroLastWatched } from '@/components/ContinueWatching';
-import { MyTVMovieRow, MyTVSeriesRow } from '@/components/MyTVContentRow';
+import HomeRows from '@/components/HomeRows';
 import { TMDBResponse, Movie } from '@/types';
 
 export const runtime = 'edge';
@@ -42,28 +37,16 @@ export default async function HomePage() {
     console.error('Failed to fetch MyTV+ data:', e);
   }
 
-  const heroMovie = trending.results[0];
-
   return (
-    <div className="bg-[#141414] min-h-screen">
-      <HeroLastWatched
-        fallbackHero={heroMovie ? <HeroBanner movie={heroMovie} /> : null}
-      />
-
-      {/* Netflix-style rows pulled up over hero */}
-      <div className="-mt-32 relative z-10 pb-10">
-        <ContinueWatchingRow />
-        <ContentRow title="Trending Now" movies={trending.results.slice(1, 20)} />
-        <Top10Row title="Top 10 Movies Today" movies={topRatedMovies.results} type="movie" />
-        <Top10Row title="Top 10 TV Shows Today" movies={topRatedTV.results} type="tv" />
-        <LandscapeRow title="Crowd Pleasers" movies={popularMovies.results.slice(0, 15)} type="movie" />
-        <ContentRow title="Popular Movies" movies={popularMovies.results} type="movie" />
-        <ContentRow title="Popular TV Shows" movies={popularTV.results} type="tv" />
-        <ContentRow title="Top Rated Series" movies={topRatedTV.results} type="tv" />
-        <ContentRow title="Now Playing" movies={nowPlaying.results} type="movie" />
-        <MyTVMovieRow title="MyTV+ Movies" movies={mytvMovies.movies.slice(0, 20)} />
-        <MyTVSeriesRow title="MyTV+ Series" series={mytvSeries.series.slice(0, 20)} />
-      </div>
-    </div>
+    <HomeRows
+      trending={trending.results}
+      popularMovies={popularMovies.results}
+      topRatedMovies={topRatedMovies.results}
+      nowPlaying={nowPlaying.results}
+      popularTV={popularTV.results}
+      topRatedTV={topRatedTV.results}
+      mytvMovies={mytvMovies.movies.slice(0, 20)}
+      mytvSeries={mytvSeries.series.slice(0, 20)}
+    />
   );
 }

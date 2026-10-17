@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getWatchHistory } from '@/lib/history';
+import { HOME_ROWS, getHiddenRows, setHiddenRows, getHeroPick, setHeroPick, HeroPick } from '@/lib/siteConfig';
 
 interface User {
   id: string;
@@ -20,6 +21,10 @@ export default function AdminPage() {
   const [savedAnnouncement, setSavedAnnouncement] = useState<string | null>(null);
   const [stats, setStats] = useState({ total: 0, completed: 0, inProgress: 0, movies: 0, shows: 0 });
   const [saved, setSaved] = useState(false);
+  const [hiddenRows, setHiddenRowsState] = useState<string[]>([]);
+  const [heroPick, setHeroPickState] = useState<HeroPick | null>(null);
+  const [trendingPicks, setTrendingPicks] = useState<any[]>([]);
+  const [dataMsg, setDataMsg] = useState('');
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -33,6 +38,14 @@ export default function AdminPage() {
     // Load announcement + stats
     setSavedAnnouncement(localStorage.getItem(ANNOUNCEMENT_KEY));
     setAnnouncement(localStorage.getItem(ANNOUNCEMENT_KEY) || '');
+    setHiddenRowsState(getHiddenRows());
+    setHeroPickState(getHeroPick());
+    fetch('https://api.themoviedb.org/3/trending/all/week?api_key=3ea9ba88a81be0f283362871b7f6b19e')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.results) setTrendingPicks(d.results.slice(0, 12));
+      })
+      .catch(() => {});
     const history = getWatchHistory();
     setStats({
       total: history.length,
@@ -59,6 +72,38 @@ export default function AdminPage() {
     localStorage.removeItem(ANNOUNCEMENT_KEY);
     setAnnouncement('');
     setSavedAnnouncement(null);
+  };
+
+  const toggleRow = (id: string) => {
+    const next = hiddenRows.includes(id)
+      ? hiddenRows.filter((r) => r !== id)
+      : [...hiddenRows, id];
+    setHiddenRowsState(next);
+    setHiddenRows(next);
+  };
+
+  const pickHero = (id: number, type: 'movie' | 'tv') => {
+    const pick = { id, type };
+    setHeroPickState(pick);
+    setHeroPick(pick);
+  };
+
+  const clearHero = () => {
+    setHeroPickState(null);
+    setHeroPick(null);
+  };
+
+  const wipeWatchData = () => {
+    localStorage.removeItem('streamv-watch-history');
+    setStats({ total: 0, completed: 0, inProgress: 0, movies: 0, shows: 0 });
+    setDataMsg('Watch history cleared.');
+    setTimeout(() => setDataMsg(''), 2500);
+  };
+
+  const replayIntro = () => {
+    sessionStorage.removeItem('luniflex_intro_shown');
+    setDataMsg('Intro will play on next visit.');
+    setTimeout(() => setDataMsg(''), 2500);
   };
 
   if (loading) {
@@ -228,6 +273,86 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Homepage controls */}
+        <div className="mt-4 bg-[#1f1f1f] rounded-md p-6">
+          <h2 className="text-lg font-semibold mb-1">Homepage</h2>
+          <p className="text-white/40 text-xs mb-5">Changes apply instantly on this device.</p>
+
+          <p className="text-white/60 text-xs uppercase tracking-wider mb-3">Featured hero</p>
+          <button
+            onClick={clearHero}
+            className={`px-4 py-2 rounded text-sm font-medium mb-4 transition ${!heroPick ? 'bg-[#E50914] text-white' : 'bg-white/10 text-white/70 hover:bg-white/20'}`}
+          >
+            Auto (Trending #1)
+          </button>
+          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 mb-6">
+            {trendingPicks.map((m: any) => {
+              const active = heroPick?.id === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => pickHero(m.id, m.media_type === 'tv' ? 'tv' : 'movie')}
+                  className={`relative rounded overflow-hidden aspect-[2/3] transition ${active ? 'ring-2 ring-[#E50914]' : 'opacity-70 hover:opacity-100'}`}
+                  title={m.title || m.name}
+                >
+                  <img
+                    src={m.poster_path ? `https://image.tmdb.org/t/p/w200${m.poster_path}` : '/no-poster.svg'}
+                    alt={m.title || m.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                  {active && (
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-[#E50914] font-bold text-xl">✓</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <p className="text-white/60 text-xs uppercase tracking-wider mb-3">Rows</p>
+          <div className="space-y-1">
+            {HOME_ROWS.map((row) => {
+              const visible = !hiddenRows.includes(row.id);
+              return (
+                <button
+                  key={row.id}
+                  onClick={() => toggleRow(row.id)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-black/40 hover:bg-black/60 rounded text-sm transition"
+                >
+                  <span className={visible ? 'text-white' : 'text-white/40'}>{row.label}</span>
+                  <span
+                    className={`w-11 h-6 rounded-full p-1 transition-colors ${visible ? 'bg-[#E50914]' : 'bg-white/15'}`}
+                  >
+                    <span
+                      className={`block w-4 h-4 bg-white rounded-full transition-transform ${visible ? 'translate-x-5' : 'translate-x-0'}`}
+                    />
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Data tools */}
+        <div className="mt-4 bg-[#1f1f1f] rounded-md p-6">
+          <h2 className="text-lg font-semibold mb-4">Data</h2>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={wipeWatchData}
+              className="flex-1 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-sm rounded transition"
+            >
+              Clear Watch History
+            </button>
+            <button
+              onClick={replayIntro}
+              className="flex-1 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white text-sm rounded transition"
+            >
+              Replay Intro
+            </button>
+          </div>
+          {dataMsg && <p className="text-emerald-400 text-sm mt-3">{dataMsg}</p>}
         </div>
 
         {/* System status */}
