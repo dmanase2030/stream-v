@@ -50,6 +50,10 @@ export default function LoadingScreen() {
       return;
     }
 
+    // Lock page scroll while the intro is showing
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     // Try to play sound immediately (works if user interacted before in this tab)
     playTadum();
 
@@ -67,10 +71,12 @@ export default function LoadingScreen() {
     const fadeTimer = setTimeout(() => setPhase('fade'), 3200);
     const hideTimer = setTimeout(() => {
       setVisible(false);
+      document.body.style.overflow = prevOverflow;
       sessionStorage.setItem('luniflex_intro_shown', '1');
     }, 3900);
 
     return () => {
+      document.body.style.overflow = prevOverflow;
       clearTimeout(streakTimer);
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);
