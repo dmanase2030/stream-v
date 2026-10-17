@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Movie } from '@/types';
 import { getBackdropUrl, getImageUrl } from '@/lib/tmdb';
+import { isInMyList, toggleMyList } from '@/lib/myList';
 
 interface TitleModalProps {
   movie: Movie | null;
@@ -14,10 +15,12 @@ interface TitleModalProps {
 
 export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
   const [visible, setVisible] = useState(false);
+  const [inList, setInList] = useState(false);
 
   useEffect(() => {
     if (movie) {
       setVisible(true);
+      setInList(isInMyList(movie.id));
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -95,10 +98,20 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
                 </svg>
                 Play
               </Link>
-              <button className="w-11 h-11 rounded-full border-2 border-white/40 hover:border-white flex items-center justify-center transition" aria-label="Add to My List">
-                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" d="M12 4v16m8-8H4" />
-                </svg>
+              <button
+                onClick={() => movie && setInList(toggleMyList({ ...movie, media_type: type } as any))}
+                className="w-11 h-11 rounded-full border-2 border-white/40 hover:border-white flex items-center justify-center transition"
+                aria-label={inList ? 'Remove from My List' : 'Add to My List'}
+              >
+                {inList ? (
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                )}
               </button>
               <button className="w-11 h-11 rounded-full border-2 border-white/40 hover:border-white flex items-center justify-center transition" aria-label="Like">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

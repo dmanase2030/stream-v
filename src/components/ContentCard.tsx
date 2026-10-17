@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Movie } from '@/types';
 import { getImageUrl } from '@/lib/tmdb';
 import { isWatched, getProgress } from '@/lib/history';
+import { isInMyList, toggleMyList } from '@/lib/myList';
 
 interface ContentCardProps {
   movie: Movie;
@@ -20,10 +21,12 @@ export default function ContentCard({ movie, type, index = 0 }: ContentCardProps
   const rating = movie.vote_average?.toFixed(1);
   const [watched, setWatched] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [inList, setInList] = useState(false);
 
   useEffect(() => {
     setWatched(isWatched(movie.id, mediaType as 'movie' | 'tv'));
     setProgress(getProgress(movie.id, mediaType as 'movie' | 'tv'));
+    setInList(isInMyList(movie.id));
   }, [movie.id, mediaType]);
 
   return (
@@ -40,6 +43,30 @@ export default function ContentCard({ movie, type, index = 0 }: ContentCardProps
           className="object-cover"
           sizes="(max-width: 640px) 240px, (max-width: 1024px) 280px, 300px"
         />
+        {/* Quick add to My List */}
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setInList(toggleMyList({ ...movie, media_type: mediaType } as any));
+          }}
+          aria-label={inList ? 'Remove from My List' : 'Add to My List'}
+          className={`absolute top-1.5 right-1.5 z-10 w-7 h-7 rounded-full border flex items-center justify-center transition-all ${
+            inList
+              ? 'bg-white border-white opacity-100'
+              : 'bg-black/60 border-white/50 opacity-0 group-hover/card:opacity-100 hover:border-white'
+          }`}
+        >
+          {inList ? (
+            <svg className="w-3.5 h-3.5 text-black" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" d="M12 5v14M5 12h14" />
+            </svg>
+          )}
+        </button>
         {/* Brand badge */}
         <div className="absolute top-1.5 left-1.5 z-10">
           <span className="text-[#E50914] font-black text-sm leading-none drop-shadow-md" style={{ fontFamily: 'Arial Black, sans-serif' }}>R</span>

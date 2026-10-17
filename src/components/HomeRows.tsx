@@ -8,6 +8,7 @@ import LandscapeRow from '@/components/LandscapeRow';
 import ContinueWatchingRow, { HeroLastWatched } from '@/components/ContinueWatching';
 import { MyTVMovieRow, MyTVSeriesRow } from '@/components/MyTVContentRow';
 import { getHiddenRows, getHeroPick, HeroPick } from '@/lib/siteConfig';
+import { getMyList } from '@/lib/myList';
 import { Movie } from '@/types';
 
 const TMDB_KEY = '3ea9ba88a81be0f283362871b7f6b19e';
@@ -26,9 +27,14 @@ interface HomeRowsProps {
 export default function HomeRows(data: HomeRowsProps) {
   const [hiddenRows, setHiddenRows] = useState<string[]>([]);
   const [overrideMovie, setOverrideMovie] = useState<Movie | null>(null);
+  const [myList, setMyList] = useState<Movie[]>([]);
 
   useEffect(() => {
     setHiddenRows(getHiddenRows());
+    const refreshList = () => setMyList(getMyList());
+    refreshList();
+    window.addEventListener('luniflex-mylist-changed', refreshList);
+    return () => window.removeEventListener('luniflex-mylist-changed', refreshList);
     const pick: HeroPick | null = getHeroPick();
     if (pick) {
       fetch(`https://api.themoviedb.org/3/${pick.type}/${pick.id}?api_key=${TMDB_KEY}`)
@@ -52,6 +58,7 @@ export default function HomeRows(data: HomeRowsProps) {
       {/* Netflix-style rows pulled up over hero */}
       <div className="-mt-32 relative z-10 pb-10">
         {!hidden('continue') && <ContinueWatchingRow />}
+        {!hidden('mylist') && myList.length > 0 && <ContentRow title="My List" movies={myList} />}
         {!hidden('trending') && <ContentRow title="Trending Now" movies={data.trending.slice(1, 20)} />}
         {!hidden('top10movies') && <Top10Row title="Top 10 Movies Today" movies={data.topRatedMovies} type="movie" />}
         {!hidden('top10tv') && <Top10Row title="Top 10 TV Shows Today" movies={data.topRatedTV} type="tv" />}
