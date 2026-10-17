@@ -7,6 +7,7 @@ import Top10Row from '@/components/Top10Row';
 import LandscapeRow from '@/components/LandscapeRow';
 import ContinueWatchingRow, { HeroLastWatched } from '@/components/ContinueWatching';
 import { MyTVMovieRow, MyTVSeriesRow } from '@/components/MyTVContentRow';
+import RecommendationsRow from '@/components/RecommendationsRow';
 import { getHiddenRows, getHeroPick, HeroPick } from '@/lib/siteConfig';
 import { getMyList } from '@/lib/myList';
 import { Movie } from '@/types';
@@ -60,6 +61,7 @@ export default function HomeRows(data: HomeRowsProps) {
       <div className="-mt-32 relative z-10 pb-10">
         {!hidden('continue') && <ContinueWatchingRow />}
         {!hidden('mylist') && myList.length > 0 && <ContentRow title="My List" movies={myList} />}
+        {!hidden('recommendations') && <RecommendationsRow />}
         {!hidden('trending') && <ContentRow title="Trending Now" movies={data.trending.slice(1, 20)} />}
         {!hidden('top10movies') && <Top10Row title="Top 10 Movies Today" movies={data.topRatedMovies} type="movie" />}
         {!hidden('top10tv') && <Top10Row title="Top 10 TV Shows Today" movies={data.topRatedTV} type="tv" />}

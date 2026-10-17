@@ -16,11 +16,25 @@ interface TitleModalProps {
 export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
   const [visible, setVisible] = useState(false);
   const [inList, setInList] = useState(false);
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
+  const [showTrailer, setShowTrailer] = useState(false);
 
   useEffect(() => {
     if (movie) {
       setVisible(true);
       setInList(isInMyList(movie.id));
+      setShowTrailer(false);
+      setTrailerKey(null);
+      fetch(`https://api.themoviedb.org/3/${type}/${movie.id}/videos?api_key=3ea9ba88a81be0f283362871b7f6b19e`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          const vids = d?.results || [];
+          const trailer =
+            vids.find((v: any) => v.site === 'YouTube' && v.type === 'Trailer') ||
+            vids.find((v: any) => v.site === 'YouTube');
+          if (trailer) setTrailerKey(trailer.key);
+        })
+        .catch(() => {});
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -76,14 +90,22 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
           </svg>
         </button>
 
-        {/* Hero image */}
+        {/* Hero image / trailer */}
         <div className="relative aspect-video">
-          {backdrop ? (
+          {showTrailer && trailerKey ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&rel=0`}
+              className="absolute inset-0 w-full h-full"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowFullScreen
+              title="Trailer"
+            />
+          ) : backdrop ? (
             <Image src={backdrop} alt={title} fill className="object-cover" sizes="850px" priority />
           ) : (
             <div className="w-full h-full bg-[#2a2a2a]" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent" />
+          {!showTrailer && <div className="absolute inset-0 bg-gradient-to-t from-[#181818] via-transparent to-transparent" />}
 
           {/* Title + buttons over image */}
           <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12">
@@ -98,6 +120,17 @@ export default function TitleModal({ movie, type, onClose }: TitleModalProps) {
                 </svg>
                 Play
               </Link>
+              {trailerKey && (
+                <button
+                  onClick={() => setShowTrailer((s) => !s)}
+                  className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white font-semibold px-5 py-2 rounded transition backdrop-blur-sm"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23 7.5s-.2-1.6-.9-2.3c-.9-.9-1.9-.9-2.4-1C16.6 4 12 4 12 4s-4.6 0-7.7.2c-.5.1-1.5.1-2.4 1-.7.7-.9 2.3-.9 2.3S.8 9.4.8 11.3v1.4c0 1.9.2 3.8.2 3.8s.2 1.6.9 2.3c.9.9 2 .9 2.6 1 1.9.2 7.5.2 7.5.2s4.6 0 7.7-.2c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.3.9-2.3s.2-1.9.2-3.8v-1.4c0-1.9-.2-3.8-.2-3.8zM9.8 15.1V8.4l6.2 3.4-6.2 3.3z" />
+                  </svg>
+                  {showTrailer ? 'Hide Trailer' : 'Trailer'}
+                </button>
+              )}
               <button
                 onClick={() => movie && setInList(toggleMyList({ ...movie, media_type: type } as any))}
                 className="w-11 h-11 rounded-full border-2 border-white/40 hover:border-white flex items-center justify-center transition"

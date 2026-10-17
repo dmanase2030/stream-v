@@ -44,6 +44,8 @@ export default function NetflixChrome({
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [showNextCard, setShowNextCard] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimer = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
@@ -92,6 +94,43 @@ export default function NetflixChrome({
       setShowNextCard(false);
     }
   }, [currentTime, duration, nextEpisodeUrl]);
+
+  // Netflix-style auto-play countdown
+  useEffect(() => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+    if (showNextCard && nextEpisodeUrl) {
+      setCountdown(10);
+      countdownRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev === null || prev <= 1) {
+            if (countdownRef.current) clearInterval(countdownRef.current);
+            router.push(nextEpisodeUrl);
+            return null;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else {
+      setCountdown(null);
+    }
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+      }
+    };
+  }, [showNextCard, nextEpisodeUrl, router]);
+
+  const cancelAutoPlay = () => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+    setCountdown(null);
+  };
 
   const togglePlay = () => {
     const video = videoRef.current;
@@ -220,21 +259,39 @@ export default function NetflixChrome({
         </button>
       )}
 
-      {/* Next episode card - Netflix style bottom right */}
+      {/* Next episode card - Netflix style bottom right with auto-play */}
       {showNextCard && nextEpisodeUrl && (
         <div className="absolute bottom-24 right-4 sm:right-8 z-40 animate-fade-up pointer-events-auto">
           <div className="bg-[#181818] rounded-lg overflow-hidden shadow-2xl w-64 sm:w-72">
             <div className="p-4">
-              <p className="text-white/60 text-xs uppercase tracking-wider mb-1">Up Next</p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-white/60 text-xs uppercase tracking-wider">Up Next</p>
+                {countdown !== null && (
+                  <button onClick={cancelAutoPlay} className="text-white/40 hover:text-white text-xs transition" aria-label="Cancel auto-play">
+                    Cancel
+                  </button>
+                )}
+              </div>
               <p className="text-white font-semibold text-sm mb-3 line-clamp-2">{nextEpisodeLabel || 'Next Episode'}</p>
+              {countdown !== null && (
+                <div className="h-1 bg-white/15 rounded-full mb-3 overflow-hidden">
+                  <div
+                    className="h-full bg-[#E50914] rounded-full transition-all duration-1000 ease-linear"
+                    style={{ width: `${(countdown / 10) * 100}%` }}
+                  />
+                </div>
+              )}
               <button
-                onClick={() => router.push(nextEpisodeUrl)}
+                onClick={() => {
+                  cancelAutoPlay();
+                  router.push(nextEpisodeUrl);
+                }}
                 className="w-full py-2.5 bg-white hover:bg-white/90 text-black font-bold text-sm rounded transition flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z" />
                 </svg>
-                Next Episode
+                {countdown !== null ? `Next Episode (${countdown})` : 'Next Episode'}
               </button>
             </div>
           </div>
