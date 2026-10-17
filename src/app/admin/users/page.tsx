@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageTitle, DataTable, StatusPill } from '../layout';
+import { PageTitle, DataTable, StatusPill } from '../components';
 
 interface AdminUser {
   id: string;
@@ -15,7 +15,7 @@ interface AdminUser {
 }
 
 function timeAgo(ts: number) {
-  if (!ts) return '—';
+  if (!ts) return 'â';
   const s = Math.floor((Date.now() - ts) / 1000);
   if (s < 60) return 'just now';
   if (s < 3600) return `${Math.floor(s / 60)}m ago`;

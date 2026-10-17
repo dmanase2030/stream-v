@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageTitle } from '../layout';
+import { PageTitle } from '../components';
 
 const ANNOUNCEMENT_KEY = 'luniflex_announcement';
 

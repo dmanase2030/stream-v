@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageTitle } from '../layout';
+import { PageTitle } from '../components';
 import { HOME_ROWS, getHiddenRows, setHiddenRows, getHeroPick, setHeroPick, HeroPick } from '@/lib/siteConfig';
 
 const TMDB_KEY = '3ea9ba88a81be0f283362871b7f6b19e';

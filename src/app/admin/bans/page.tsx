@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PageTitle, DataTable, StatusPill } from '../layout';
+import { PageTitle, DataTable, StatusPill } from '../components';
 
 interface BannedUser {
   id: string;
@@ -57,7 +57,7 @@ export default function AdminBans() {
               )}
               <span className="font-medium">{u.username}</span>
             </span>,
-            <span className="text-white/50 text-sm" key="r">{u.banReason || '—'}</span>,
+            <span className="text-white/50 text-sm" key="r">{u.banReason || 'â'}</span>,
             <StatusPill key="s" value="banned" />,
             <button
               key="b"

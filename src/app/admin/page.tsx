@@ -33,8 +33,8 @@ export default function AdminOverview() {
   }, []);
 
   const cards = [
-    { label: 'Registered Users', value: userCount ?? '—', color: '' },
-    { label: 'Banned Users', value: bannedCount ?? '—', color: 'text-[#E50914]' },
+    { label: 'Registered Users', value: userCount ?? 'â', color: '' },
+    { label: 'Banned Users', value: bannedCount ?? 'â', color: 'text-[#E50914]' },
     { label: 'Total Watched', value: stats.total, color: '' },
     { label: 'Completed', value: stats.completed, color: 'text-emerald-400' },
     { label: 'In Progress', value: stats.inProgress, color: 'text-[#E50914]' },

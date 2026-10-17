@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PageTitle } from '../layout';
+import { PageTitle } from '../components';
 
 export default function AdminSettings() {
   const [dataMsg, setDataMsg] = useState('');
