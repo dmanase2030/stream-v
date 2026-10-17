@@ -110,29 +110,30 @@ export default function AdminPage() {
       <div className="max-w-6xl mx-auto px-4 py-8 pt-24">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Admin Panel</h1>
-            <p className="text-white/50 mt-1">Welcome, {user.username}</p>
+            <h1 className="text-[#E50914] text-2xl font-black tracking-tight">LUNIFLEX</h1>
+            <h2 className="text-2xl font-medium text-white mt-1">Admin Panel</h2>
+            <p className="text-white/50 text-sm mt-1">Welcome, {user.username}</p>
           </div>
-          <Link href="/" className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm transition">
+          <Link href="/" className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded hover:bg-white/90 transition">
             View Site
           </Link>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+          <div className="bg-[#1f1f1f] rounded-md p-5 hover:bg-[#2a2a2a] transition-colors">
             <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Total Watched</p>
             <p className="text-3xl font-bold">{stats.total}</p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+          <div className="bg-[#1f1f1f] rounded-md p-5 hover:bg-[#2a2a2a] transition-colors">
             <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Completed</p>
             <p className="text-3xl font-bold text-emerald-400">{stats.completed}</p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+          <div className="bg-[#1f1f1f] rounded-md p-5 hover:bg-[#2a2a2a] transition-colors">
             <p className="text-white/40 text-xs uppercase tracking-wider mb-1">In Progress</p>
             <p className="text-3xl font-bold text-[#E50914]">{stats.inProgress}</p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-5">
+          <div className="bg-[#1f1f1f] rounded-md p-5 hover:bg-[#2a2a2a] transition-colors">
             <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Movies / Shows</p>
             <p className="text-3xl font-bold">{stats.movies}<span className="text-white/30 text-lg"> / {stats.shows}</span></p>
           </div>
@@ -140,7 +141,7 @@ export default function AdminPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Announcement manager */}
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+          <div className="bg-[#1f1f1f] rounded-md p-6">
             <h2 className="text-lg font-semibold mb-1">Site Announcement</h2>
             <p className="text-white/40 text-xs mb-4">Shows as a banner at the top of every page.</p>
             <textarea
@@ -148,12 +149,12 @@ export default function AdminPage() {
               onChange={(e) => setAnnouncement(e.target.value)}
               placeholder="e.g. New episodes added every Friday!"
               rows={3}
-              className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#E50914]/50 resize-none"
+              className="w-full bg-black/60 border border-white/10 rounded px-4 py-3 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-white/30 resize-none"
             />
             <div className="flex gap-2 mt-3">
               <button
                 onClick={saveAnnouncement}
-                className="flex-1 px-4 py-2.5 bg-[#E50914] hover:bg-[#f6121d] text-white text-sm font-semibold rounded-lg transition"
+                className="flex-1 px-4 py-2.5 bg-[#E50914] hover:bg-[#f6121d] text-white text-sm font-bold rounded transition"
               >
                 {saved ? 'Saved!' : savedAnnouncement ? 'Update' : 'Publish'}
               </button>
@@ -167,7 +168,7 @@ export default function AdminPage() {
               )}
             </div>
             {savedAnnouncement && (
-              <div className="mt-4 p-3 bg-[#E50914]/10 border border-[#E50914]/20 rounded-lg">
+              <div className="mt-4 p-3 bg-black/40 border-l-2 border-[#E50914] rounded-r">
                 <p className="text-[11px] text-white/40 uppercase tracking-wider mb-1">Live now</p>
                 <p className="text-sm text-white/80">{savedAnnouncement}</p>
               </div>
@@ -176,7 +177,7 @@ export default function AdminPage() {
 
           {/* Admin profile + quick actions */}
           <div className="space-y-4">
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <div className="bg-[#1f1f1f] rounded-md p-6">
               <h2 className="text-lg font-semibold mb-4">Admin</h2>
               <div className="flex items-center gap-3">
                 {user.avatar ? (
@@ -193,20 +194,20 @@ export default function AdminPage() {
               </div>
               <a
                 href="/api/auth/logout"
-                className="block mt-4 px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg text-sm text-center transition"
+                className="block mt-4 px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded text-sm text-center font-medium transition"
               >
                 Sign Out
               </a>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <div className="bg-[#1f1f1f] rounded-md p-6">
               <h2 className="text-lg font-semibold mb-4">Quick Links</h2>
               <div className="space-y-2">
                 <a
                   href="https://dash.cloudflare.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-sm transition"
+                  className="flex items-center justify-between px-4 py-3 bg-black/40 hover:bg-black/60 rounded text-sm transition"
                 >
                   <span>Cloudflare Dashboard</span>
                   <span className="text-white/30">↗</span>
@@ -215,7 +216,7 @@ export default function AdminPage() {
                   href="https://github.com/dmanase2030/stream-v"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-sm transition"
+                  className="flex items-center justify-between px-4 py-3 bg-black/40 hover:bg-black/60 rounded text-sm transition"
                 >
                   <span>GitHub Repo</span>
                   <span className="text-white/30">↗</span>
@@ -224,7 +225,7 @@ export default function AdminPage() {
                   href="https://discord.com/developers/applications"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-lg text-sm transition"
+                  className="flex items-center justify-between px-4 py-3 bg-black/40 hover:bg-black/60 rounded text-sm transition"
                 >
                   <span>Discord Developers</span>
                   <span className="text-white/30">↗</span>
