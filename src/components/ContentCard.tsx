@@ -35,7 +35,7 @@ export default function ContentCard({ movie, type, index = 0 }: ContentCardProps
       className="block w-full group/card"
       style={{ animationDelay: `${index * 40}ms` }}
     >
-      <div className="relative aspect-video rounded-md overflow-hidden bg-[#2a2a2a] transition-all duration-300 group-hover/card:scale-[1.04] group-hover/card:z-10 group-hover/card:shadow-2xl group-hover/card:shadow-black/60 cursor-pointer">
+      <div className="relative aspect-video rounded-md overflow-hidden bg-[#1a1a1a] animate-shimmer transition-all duration-300 group-hover/card:scale-[1.04] group-hover/card:z-10 group-hover/card:shadow-2xl group-hover/card:shadow-black/60 cursor-pointer">
         <Image
           src={getImageUrl(movie.backdrop_path || movie.poster_path, 'w500')}
           alt={title}

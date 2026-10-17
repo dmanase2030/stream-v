@@ -36,7 +36,7 @@ export default function HeroBanner({ movie }: HeroBannerProps) {
           <div className="max-w-xl">
             {/* Netflix N SERIES eyebrow */}
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-[#E50914] font-black text-xl tracking-tighter">N</span>
+              <span className="text-[#E50914] font-black text-xl tracking-tighter">L</span>
               <span className="text-white/90 text-sm font-medium tracking-[0.2em] uppercase">
                 {type === 'tv' ? 'Series' : 'Film'}
               </span>

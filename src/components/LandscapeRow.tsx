@@ -85,9 +85,9 @@ export default function LandscapeRow({ title, movies, type }: LandscapeRowProps)
                       <span className="text-white/60 text-sm font-medium text-center line-clamp-2">{title}</span>
                     </div>
                   )}
-                  {/* Netflix N corner badge */}
+                  {/* Brand corner badge */}
                   <div className="absolute top-0 left-0 bg-[#E50914] text-white text-[10px] font-black px-1.5 py-0.5 rounded-br">
-                    N
+                    L
                   </div>
                   {/* Hover play */}
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/card:opacity-100 transition-opacity flex items-center justify-center">

@@ -57,7 +57,7 @@ export default function Top10Row({ title, movies, type }: Top10RowProps) {
         <div
           ref={rowRef}
           onScroll={handleScroll}
-          className="flex gap-1 overflow-x-auto hide-scrollbar scroll-smooth px-[4%] pb-2"
+          className="flex gap-2 sm:gap-3 overflow-x-auto hide-scrollbar scroll-smooth px-[4%] pb-2"
         >
           {top10.map((movie, i) => {
             const mediaType = type || (movie.media_type === 'tv' || movie.first_air_date ? 'tv' : 'movie');
@@ -69,7 +69,7 @@ export default function Top10Row({ title, movies, type }: Top10RowProps) {
               >
                 {/* Giant Netflix number */}
                 <span
-                  className="text-[120px] sm:text-[160px] lg:text-[180px] font-black leading-[0.8] text-[#141414] select-none -mr-3 sm:-mr-4"
+                  className="text-[110px] sm:text-[150px] lg:text-[170px] font-black leading-[0.8] text-[#141414] select-none -mr-1 sm:-mr-2"
                   style={{
                     WebkitTextStroke: '4px #595959',
                     fontFamily: 'Arial Black, sans-serif',

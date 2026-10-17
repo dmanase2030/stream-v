@@ -42,7 +42,7 @@ export default function ContentRow({ title, movies, type }: ContentRowProps) {
           ›
         </span>
         <span className="ml-2 text-xs text-[#54b9c5] opacity-0 group-hover/row:opacity-100 transition-opacity whitespace-nowrap">
-          Explore All
+          Explore All ›
         </span>
       </h2>
 
