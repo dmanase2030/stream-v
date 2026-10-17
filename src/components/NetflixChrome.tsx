@@ -114,30 +114,7 @@ export default function NetflixChrome({
     resetHideTimer();
   };
 
-  const toggleFullscreen = () => {
-    try {
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      } else {
-        const video = videoRef.current as HTMLVideoElement & { webkitEnterFullscreen?: () => void } | null;
-        // iPhone Safari: only video elements can go truly fullscreen
-        if (!isEmbed && video && typeof video.webkitEnterFullscreen === 'function' && !video.paused) {
-          video.webkitEnterFullscreen();
-        } else if (!isEmbed && video && typeof video.webkitEnterFullscreen === 'function') {
-          video.webkitEnterFullscreen();
-        } else {
-          const container = document.getElementById('cinema-player');
-          const el = container || document.documentElement;
-          if (el.requestFullscreen) {
-            el.requestFullscreen().catch(() => {});
-          } else if ((el as any).webkitRequestFullscreen) {
-            (el as any).webkitRequestFullscreen();
-          }
-        }
-      }
-    } catch {}
-    resetHideTimer();
-  };
+
 
   return (
     <div
@@ -178,12 +155,26 @@ export default function NetflixChrome({
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h1 className="text-white text-lg sm:text-xl font-semibold truncate">{title}</h1>
               {episodeLabel && (
                 <p className="text-white/60 text-sm truncate">{episodeLabel}</p>
               )}
             </div>
+            {showSourceButton && onOpenSources && (
+              <button onClick={() => { onOpenSources(); resetHideTimer(); }} className="p-2 text-white hover:text-white/70 transition flex-shrink-0" aria-label="Sources">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                </svg>
+              </button>
+            )}
+            {showEpisodesButton && onOpenEpisodes && (
+              <button onClick={() => { onOpenEpisodes(); resetHideTimer(); }} className="p-2 text-white hover:text-white/70 transition flex-shrink-0" aria-label="Episodes">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -311,25 +302,6 @@ export default function NetflixChrome({
 
             <div className="flex items-center gap-4">
               <span className="text-white text-sm font-medium hidden md:block truncate max-w-[200px]">{title}</span>
-              {showSourceButton && onOpenSources && (
-                <button onClick={() => { onOpenSources(); resetHideTimer(); }} className="text-white hover:text-white/70 transition" aria-label="Sources">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                  </svg>
-                </button>
-              )}
-              {showEpisodesButton && onOpenEpisodes && (
-                <button onClick={() => { onOpenEpisodes(); resetHideTimer(); }} className="text-white hover:text-white/70 transition" aria-label="Episodes">
-                  <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                  </svg>
-                </button>
-              )}
-              <button onClick={toggleFullscreen} className="text-white hover:text-white/70 transition" aria-label="Fullscreen">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
