@@ -97,7 +97,7 @@ export default function SettingsPage() {
             </div>
           ) : (
             <div className="flex items-center justify-between">
-              <p className="text-white/50 text-sm">You're browsing as a guest.</p>
+              <p className="text-white/50 text-sm">You&apos;re browsing as a guest.</p>
               <a
                 href="/api/auth/discord"
                 className="px-4 py-2 bg-[#5865F2] hover:bg-[#4752C4] text-white text-sm font-semibold rounded transition"
@@ -108,7 +108,7 @@ export default function SettingsPage() {
           )}
           {user?.isAdmin && (
             <Link href="/admin" className="inline-block mt-4 text-sm text-[#E50914] hover:underline">
-              Go to Admin Panel →
+              Go to Admin Panel â
             </Link>
           )}
         </section>
@@ -163,7 +163,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <Link href="/" className="text-sm text-white/50 hover:text-white transition">← Back to home</Link>
+        <Link href="/" className="text-sm text-white/50 hover:text-white transition">â Back to home</Link>
       </div>
     </div>
   );

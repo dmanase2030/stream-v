@@ -15,7 +15,7 @@ export default async function NewPage() {
     <div className="min-h-screen bg-black text-white">
       <div className="pt-24 pb-4 px-[4%]">
         <h1 className="text-2xl md:text-3xl font-bold">New & Popular</h1>
-        <p className="text-white/50 text-sm mt-1">Fresh releases, coming soon, and what's trending.</p>
+        <p className="text-white/50 text-sm mt-1">Fresh releases, coming soon, and what&apos;s trending.</p>
       </div>
       <div className="space-y-2 pb-16">
         <Top10Row title="Top 10 This Week" movies={(trending as any).results || []} />
