@@ -40,9 +40,9 @@ export default function ContentCard({ movie, type, index = 0 }: ContentCardProps
           className="object-cover"
           sizes="(max-width: 640px) 240px, (max-width: 1024px) 280px, 300px"
         />
-        {/* Netflix N badge */}
+        {/* Brand badge */}
         <div className="absolute top-1.5 left-1.5 z-10">
-          <span className="text-[#E50914] font-black text-sm leading-none drop-shadow-md" style={{ fontFamily: 'Arial Black, sans-serif' }}>N</span>
+          <span className="text-[#E50914] font-black text-sm leading-none drop-shadow-md" style={{ fontFamily: 'Arial Black, sans-serif' }}>R</span>
         </div>
         {/* Netflix-style hover overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
