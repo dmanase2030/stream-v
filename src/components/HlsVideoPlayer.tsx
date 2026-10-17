@@ -54,6 +54,11 @@ export default function HlsVideoPlayer({
   const [failedSources, setFailedSources] = useState<Set<number>>(new Set());
   const [autoTrying, setAutoTrying] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  // Auto-failover chain: embed -> HLS -> error
+  const embedHealthyRef = useRef(false);
+  const triedHlsRef = useRef(false);
+  const [failoverMsg, setFailoverMsg] = useState<string | null>(null);
+  const [allFailed, setAllFailed] = useState(false);
 
   // Shared state
   const [showNextButton, setShowNextButton] = useState(false);
@@ -115,6 +120,12 @@ export default function HlsVideoPlayer({
       })
       .catch(() => {
         if (cancelled) return;
+        if (triedHlsRef.current) {
+          // Embed already failed and HLS extraction failed too
+          setAllFailed(true);
+          setHlsLoading(false);
+          return;
+        }
         // Auto-fallback to embed — stream extraction failed
         setMode('embed');
         setEmbedLoading(true);
@@ -154,6 +165,10 @@ export default function HlsVideoPlayer({
           setHlsLoading(false);
           hls.destroy();
           hlsRef.current = null;
+          if (triedHlsRef.current) {
+            setAllFailed(true);
+            return;
+          }
           // Auto-fallback to embed after 1s
           setTimeout(() => {
             setMode('embed');
@@ -169,6 +184,11 @@ export default function HlsVideoPlayer({
         video.play().catch(() => {});
       }, { once: true });
       video.addEventListener('error', () => {
+        if (triedHlsRef.current) {
+          setAllFailed(true);
+          setHlsLoading(false);
+          return;
+        }
         // Auto-fallback to embed
         setMode('embed');
         setEmbedLoading(true);
@@ -254,6 +274,7 @@ export default function HlsVideoPlayer({
       const progress = realDuration > 0 ? Math.min(Math.round((ct / realDuration) * 100), 100) : 0;
 
       if (playerEvent === 'timeupdate' && ct > 0) {
+        embedHealthyRef.current = true;
         if (Math.abs(ct - lastSaveRef.current) >= 10) {
           lastSaveRef.current = ct;
           updateProgress(id, type, progress, season, episode, ct, realDuration);
@@ -278,6 +299,24 @@ export default function HlsVideoPlayer({
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [mode, id, type, season, episode, effectiveDuration, triggerAt, nextEpisodeUrl, autoNext, hasNavigated, router]);
+
+  // Embed watchdog: if VixSrc never starts playing, fail over to HLS
+  useEffect(() => {
+    if (mode !== 'embed') return;
+    embedHealthyRef.current = false;
+    const t = setTimeout(() => {
+      if (embedHealthyRef.current) return;
+      if (!triedHlsRef.current) {
+        triedHlsRef.current = true;
+        setFailoverMsg('Source failed — trying next...');
+        setTimeout(() => setFailoverMsg(null), 3500);
+        switchToHls();
+      } else {
+        setAllFailed(true);
+      }
+    }, 25000);
+    return () => clearTimeout(t);
+  }, [mode, id, type, season, episode]);
 
   // Embed auto-fallback
   const tryNextSource = useCallback(() => {
@@ -307,6 +346,8 @@ export default function HlsVideoPlayer({
     setEmbedLoading(true);
     setFailedSources(new Set());
     setAutoTrying(false);
+    setAllFailed(false);
+    triedHlsRef.current = false;
   };
 
   const switchToHls = () => {
@@ -439,6 +480,40 @@ export default function HlsVideoPlayer({
             </div>
           )}
         </div>
+
+        {/* Auto-failover toast */}
+        {failoverMsg && (
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-40 bg-[#181818]/95 border border-white/10 rounded-full px-5 py-2.5 flex items-center gap-3 shadow-2xl">
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <span className="text-white text-sm font-medium whitespace-nowrap">{failoverMsg}</span>
+          </div>
+        )}
+
+        {/* All sources failed */}
+        {allFailed && (
+          <div className="absolute inset-0 z-40 bg-black/95 flex items-center justify-center p-6">
+            <div className="text-center max-w-sm">
+              <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-[#E50914]/15 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#E50914]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" />
+                </svg>
+              </div>
+              <h3 className="text-white text-lg font-semibold mb-2">Couldn&apos;t load this video</h3>
+              <p className="text-white/50 text-sm mb-6">All available sources failed. Check your connection and try again.</p>
+              <button
+                onClick={() => {
+                  setAllFailed(false);
+                  triedHlsRef.current = false;
+                  embedHealthyRef.current = false;
+                  switchToEmbed();
+                }}
+                className="px-8 py-3 bg-[#E50914] hover:bg-[#f6121d] text-white font-bold rounded transition"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Netflix chrome overlay */}
         <NetflixChrome
