@@ -66,12 +66,6 @@ export default function ProfileGate() {
 
   useEffect(() => {
     const stored = getProfiles();
-    const active = getActiveProfile();
-    if (active && stored.length > 0) {
-      // Already have an active profile, don't show gate
-      setLoading(false);
-      return;
-    }
     setProfiles(stored);
     setLoading(false);
   }, []);
@@ -103,9 +97,9 @@ export default function ProfileGate() {
   };
 
   // Don't show gate if there's an active profile
-  const active = getActiveProfile();
-  if (!loading && active && profiles.length > 0) return null;
   if (loading) return null;
+  const active = getActiveProfile();
+  if (active) return null;
 
   return (
     <div className="fixed inset-0 z-[200] bg-[#141414] flex flex-col items-center justify-center px-4 overflow-hidden min-h-screen supports-[height:100dvh]:min-h-[100dvh]">
