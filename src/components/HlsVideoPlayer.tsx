@@ -6,6 +6,7 @@ import Hls from 'hls.js';
 import { fetchStream, StreamResult } from '@/lib/streamApi';
 import { streamingSources } from '@/lib/sources';
 import { addToHistory, markAsWatched, updateProgress, getSavedTime } from '@/lib/history';
+import NetflixChrome from '@/components/NetflixChrome';
 
 interface HlsPlayerProps {
   type: 'movie' | 'tv';
@@ -21,13 +22,15 @@ interface HlsPlayerProps {
   nextEpisodeUrl?: string | null;
   nextEpisodeLabel?: string;
   autoNext?: boolean;
+  cinemaMode?: boolean;
+  onBack?: () => void;
 }
 
 type PlayerMode = 'hls' | 'embed';
 
 export default function HlsVideoPlayer({
   type, id, season, episode, title, backdrop, posterPath, overview, voteAverage,
-  runtime, nextEpisodeUrl, nextEpisodeLabel, autoNext = true,
+  runtime, nextEpisodeUrl, nextEpisodeLabel, autoNext = true, cinemaMode = false, onBack,
 }: HlsPlayerProps) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -331,6 +334,106 @@ export default function HlsVideoPlayer({
   };
 
   const isLoading = mode === 'hls' ? hlsLoading : embedLoading;
+
+  const episodeLabel = season && episode ? `S${season} E${episode}` : undefined;
+
+  const handleChromeSeek = (time: number) => {
+    const video = videoRef.current;
+    if (video && mode === 'hls') {
+      video.currentTime = time;
+    }
+  };
+
+  const handleChromeBack = () => {
+    if (onBack) onBack();
+    else router.back();
+  };
+
+  // Cinema mode: fullscreen Netflix experience
+  if (cinemaMode) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-black">
+        {/* Video layer */}
+        <div className="absolute inset-0">
+          {mode === 'hls' && (
+            <video
+              ref={videoRef}
+              className="w-full h-full"
+              playsInline
+              autoPlay
+              style={{ display: hlsError ? 'none' : 'block' }}
+            />
+          )}
+          {mode === 'embed' && (
+            <iframe
+              ref={iframeRef}
+              src={embedUrl}
+              className="w-full h-full"
+              allowFullScreen
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              referrerPolicy="origin"
+              onLoad={handleEmbedLoad}
+              onError={() => autoTrying && tryNextSource()}
+              title={title || 'Video Player'}
+              style={{ border: 'none' }}
+            />
+          )}
+          {isLoading && (
+            <div
+              className="absolute inset-0 z-10 flex items-center justify-center bg-black"
+              style={{
+                backgroundImage: backdrop ? `url(${backdrop})` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
+              <div className="absolute inset-0 bg-black/85" />
+              <div className="relative flex flex-col items-center gap-4">
+                <div className="relative w-14 h-14">
+                  <div className="absolute inset-0 rounded-full border-[3px] border-white/10" />
+                  <div className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#E50914] animate-spin" />
+                </div>
+                <p className="text-white/60 text-sm">
+                  {mode === 'hls' ? 'Loading stream...' : 'Connecting...'}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Netflix chrome overlay */}
+        <NetflixChrome
+          title={title || 'Now Playing'}
+          episodeLabel={episodeLabel}
+          videoRef={videoRef}
+          isEmbed={mode === 'embed'}
+          onBack={handleChromeBack}
+          nextEpisodeUrl={nextEpisodeUrl}
+          nextEpisodeLabel={nextEpisodeLabel}
+          currentTime={currentTime}
+          duration={duration > 0 ? duration : effectiveDuration}
+          onSeek={handleChromeSeek}
+        />
+
+        {/* Source switcher - minimal top right in cinema */}
+        {mode === 'embed' && !isLoading && (
+          <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-40">
+            <select
+              value={sourceIndex}
+              onChange={(e) => handleSourceChange(Number(e.target.value))}
+              className="bg-black/60 text-white/80 text-xs rounded px-2 py-1.5 border border-white/10 backdrop-blur-sm"
+            >
+              {streamingSources.map((s, i) => (
+                <option key={s.name} value={i} className="bg-black">
+                  {s.name}{failedSources.has(i) ? ' (failed)' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-3">

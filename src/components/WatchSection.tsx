@@ -19,11 +19,13 @@ interface WatchSectionProps {
   nextEpisodeUrl?: string | null;
   nextEpisodeLabel?: string;
   seasons?: Season[];
+  cinemaMode?: boolean;
+  onBack?: () => void;
 }
 
 export default function WatchSection({
   type, id, season, episode, title, backdrop, posterPath, overview, voteAverage,
-  runtime, nextEpisodeUrl, nextEpisodeLabel, seasons,
+  runtime, nextEpisodeUrl, nextEpisodeLabel, seasons, cinemaMode = false, onBack,
 }: WatchSectionProps) {
   const [autoNext, setAutoNext] = useState(true);
   const isTV = type === 'tv';
@@ -46,6 +48,8 @@ export default function WatchSection({
           nextEpisodeUrl={nextEpisodeUrl}
           nextEpisodeLabel={nextEpisodeLabel}
           autoNext={autoNext}
+          cinemaMode={cinemaMode}
+          onBack={onBack}
         />
       </div>
 
