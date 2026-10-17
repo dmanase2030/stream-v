@@ -144,15 +144,15 @@ export default function NetflixChrome({
         <button
           aria-label="Show controls"
           onClick={resetHideTimer}
-          className="absolute top-0 left-0 right-0 h-20 z-40 cursor-default"
+          className="absolute top-0 left-0 right-0 h-20 z-40 cursor-default pointer-events-auto"
           style={{ background: 'transparent', border: 'none' }}
         />
       )}
 
       {/* Top bar - back + title */}
       <div
-        className={`absolute top-0 left-0 right-0 transition-all duration-300 ${isEmbed ? 'pointer-events-auto' : ''} ${
-          showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
+        className={`absolute top-0 left-0 right-0 transition-all duration-300 ${
+          showControls ? `opacity-100 translate-y-0 ${isEmbed ? 'pointer-events-auto' : ''}` : 'opacity-0 -translate-y-4 pointer-events-none'
         }`}
       >
         <div className="bg-gradient-to-b from-black/80 to-transparent px-4 sm:px-8 pt-4 sm:pt-6 pb-12">
@@ -243,8 +243,8 @@ export default function NetflixChrome({
 
       {/* Bottom control bar */}
       <div
-        className={`absolute bottom-0 left-0 right-0 transition-all duration-300 ${isEmbed ? 'pointer-events-auto' : ''} ${
-          showControls ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+        className={`absolute bottom-0 left-0 right-0 transition-all duration-300 ${
+          showControls ? `opacity-100 translate-y-0 ${isEmbed ? 'pointer-events-auto' : ''}` : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
       >
         <div className="bg-gradient-to-t from-black/90 via-black/50 to-transparent px-4 sm:px-8 pb-4 sm:pb-6 pt-16">
