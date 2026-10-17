@@ -135,19 +135,15 @@ export default function NetflixChrome({
       onMouseMove={resetHideTimer}
       onTouchStart={resetHideTimer}
     >
-      {/* Click to toggle controls (not on buttons) - HLS mode only so embed taps pass through */}
-      {!isEmbed && (
-        <div
-          className="absolute inset-0"
-          onClick={(e) => {
-            if ((e.target as HTMLElement).closest('button') || (e.target as HTMLElement).closest('[data-progress]')) return;
-            if (showControls) {
-              setShowControls(false);
-              if (hideTimer.current) clearTimeout(hideTimer.current);
-            } else {
-              resetHideTimer();
-            }
-          }}
+
+
+      {/* Invisible tap zone at top - reveals controls when tapped */}
+      {!showControls && (
+        <button
+          aria-label="Show controls"
+          onClick={resetHideTimer}
+          className="absolute top-0 left-0 right-0 h-20 z-40 cursor-default"
+          style={{ background: 'transparent', border: 'none' }}
         />
       )}
 
