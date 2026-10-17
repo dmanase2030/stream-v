@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { WatchHistoryItem, getLastWatched, getResumeUrl, getContinueWatching } from '@/lib/history';
 import { SeasonDetail } from '@/types';
 
@@ -47,58 +47,112 @@ async function resolveSmartUrl(item: WatchHistoryItem): Promise<{ url: string; l
 
 export default function ContinueWatchingRow() {
   const [items, setItems] = useState<WatchHistoryItem[]>([]);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(true);
 
   useEffect(() => {
     setItems(getContinueWatching());
   }, []);
 
+  const handleScroll = () => {
+    if (!rowRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = rowRef.current;
+    setShowLeft(scrollLeft > 20);
+    setShowRight(scrollLeft < scrollWidth - clientWidth - 20);
+  };
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (!rowRef.current) return;
+    const scrollAmount = rowRef.current.clientWidth * 0.8;
+    rowRef.current.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
+
   if (!items.length) return null;
 
   return (
-    <div className="mb-10 lg:mb-14">
-      <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white mb-4 lg:mb-6 px-6 sm:px-8 lg:px-14">
+    <div className="relative mb-8 lg:mb-10 group/row">
+      {/* Netflix-style section title - matches ContentRow */}
+      <h2 className="text-white text-lg lg:text-xl font-medium mb-3 px-[4%] hover:text-white/70 transition-colors cursor-pointer inline-block">
         Continue Watching
+        <span className="inline-block ml-2 text-xs text-[#54b9c5] opacity-0 group-hover/row:opacity-100 transition-opacity">
+          Explore All ›
+        </span>
       </h2>
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar px-6 sm:px-8 lg:px-14 py-1">
-        {items.map((item) => {
-          const imgUrl = item.poster_path
-            ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
-            : '/no-poster.svg';
 
-          return (
-            <Link
-              key={`${item.type}-${item.id}-${item.season}-${item.episode}`}
-              href={getResumeUrl(item)}
-              className="min-w-[155px] w-[155px] sm:min-w-[175px] sm:w-[175px] lg:min-w-[200px] lg:w-[200px] flex-shrink-0 group/cw"
-            >
-              <div className="relative aspect-[2/3] rounded-2xl overflow-hidden bg-white/5 transition-all duration-300 group-hover/cw:scale-[1.03] group-hover/cw:shadow-2xl">
-                <Image src={imgUrl} alt={item.title} fill className="object-cover" sizes="200px" />
-                {/* Progress bar */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
-                  <div
-                    className="h-full bg-accent-red rounded-full transition-all"
-                    style={{ width: `${Math.max(item.progress, 5)}%` }}
-                  />
-                </div>
-                {/* Play overlay */}
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover/cw:opacity-100 transition-opacity">
-                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-                    <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
+      <div className="relative">
+        {/* Left chevron - Netflix style */}
+        {showLeft && (
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-0 bottom-0 z-20 w-[4%] min-w-[40px] bg-[#141414]/70 hover:bg-[#141414]/90 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
+            aria-label="Scroll left"
+          >
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+
+        {/* Cards - Netflix spacing, matches ContentRow */}
+        <div
+          ref={rowRef}
+          onScroll={handleScroll}
+          className="flex gap-2 overflow-x-auto hide-scrollbar scroll-smooth px-[4%] pb-2"
+        >
+          {items.map((item) => {
+            const imgUrl = item.poster_path
+              ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
+              : '/no-poster.svg';
+
+            return (
+              <div key={`${item.type}-${item.id}-${item.season}-${item.episode}`} className="flex-shrink-0 w-[160px] sm:w-[180px] lg:w-[200px]">
+                <Link href={getResumeUrl(item)} className="block group/card">
+                  <div className="relative aspect-[2/3] rounded-md overflow-hidden bg-white/5 transition-transform duration-300 group-hover/card:scale-[1.04] group-hover/card:z-10 group-hover/card:shadow-2xl">
+                    <Image src={imgUrl} alt={item.title} fill className="object-cover" sizes="200px" />
+                    {/* Netflix red progress bar */}
+                    <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/20">
+                      <div
+                        className="h-full bg-[#E50914]"
+                        style={{ width: `${Math.max(item.progress, 5)}%` }}
+                      />
+                    </div>
+                    {/* Episode badge for TV */}
+                    {item.type === 'tv' && item.season && item.episode && (
+                      <div className="absolute top-2 left-2 bg-black/60 text-[10px] font-medium text-white px-2 py-0.5 rounded">
+                        S{item.season} E{item.episode}
+                      </div>
+                    )}
+                    {/* Play overlay on hover */}
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-opacity">
+                      <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+                        <svg className="w-5 h-5 text-black ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                {/* Episode badge for TV */}
-                {item.type === 'tv' && item.season && item.episode && (
-                  <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-[10px] font-medium text-white px-2 py-0.5 rounded-full">
-                    S{item.season} E{item.episode}
-                  </div>
-                )}
+                </Link>
               </div>
-              <p className="text-xs text-white/50 mt-2 truncate">{item.title}</p>
-            </Link>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {/* Right chevron - Netflix style */}
+        {showRight && (
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-0 bottom-0 z-20 w-[4%] min-w-[40px] bg-[#141414]/70 hover:bg-[#141414]/90 flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
+            aria-label="Scroll right"
+          >
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );
