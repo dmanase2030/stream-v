@@ -34,16 +34,17 @@ export default function HomeRows(data: HomeRowsProps) {
     const refreshList = () => setMyList(getMyList());
     refreshList();
     window.addEventListener('luniflex-mylist-changed', refreshList);
-    return () => window.removeEventListener('luniflex-mylist-changed', refreshList);
-    const pick: HeroPick | null = getHeroPick();
-    if (pick) {
-      fetch(`https://api.themoviedb.org/3/${pick.type}/${pick.id}?api_key=${TMDB_KEY}`)
+    const heroPick: HeroPick | null = getHeroPick();
+    if (heroPick) {
+      const { id, type } = heroPick;
+      fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${TMDB_KEY}`)
         .then((r) => (r.ok ? r.json() : null))
         .then((m) => {
           if (m) setOverrideMovie(m);
         })
         .catch(() => {});
     }
+    return () => window.removeEventListener('luniflex-mylist-changed', refreshList);
   }, []);
 
   const heroMovie = overrideMovie || data.trending[0];
