@@ -367,7 +367,7 @@ export default function HlsVideoPlayer({
   // Cinema mode: fullscreen Netflix experience
   if (cinemaMode) {
     return (
-      <div className="fixed inset-0 z-[100] bg-black">
+      <div id="cinema-player" className="fixed inset-0 z-[100] bg-black">
         {/* Video layer */}
         <div className="absolute inset-0">
           {mode === 'hls' && (

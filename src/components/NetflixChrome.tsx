@@ -115,11 +115,27 @@ export default function NetflixChrome({
   };
 
   const toggleFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
-    } else {
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
+    try {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else {
+        const video = videoRef.current as HTMLVideoElement & { webkitEnterFullscreen?: () => void } | null;
+        // iPhone Safari: only video elements can go truly fullscreen
+        if (!isEmbed && video && typeof video.webkitEnterFullscreen === 'function' && !video.paused) {
+          video.webkitEnterFullscreen();
+        } else if (!isEmbed && video && typeof video.webkitEnterFullscreen === 'function') {
+          video.webkitEnterFullscreen();
+        } else {
+          const container = document.getElementById('cinema-player');
+          const el = container || document.documentElement;
+          if (el.requestFullscreen) {
+            el.requestFullscreen().catch(() => {});
+          } else if ((el as any).webkitRequestFullscreen) {
+            (el as any).webkitRequestFullscreen();
+          }
+        }
+      }
+    } catch {}
     resetHideTimer();
   };
 
