@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+
 import SearchBar from './SearchBar';
 import UserMenu from './UserMenu';
 
@@ -16,14 +16,9 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Hide navbar entirely on channel player pages
   const isChannelPage = pathname.startsWith('/channel/');
-
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
 
   if (isChannelPage) return null;
 
@@ -58,52 +53,43 @@ export default function Navbar() {
 
           {/* Right Side - Netflix style */}
           <div className="flex items-center gap-4">
-            <SearchBar />
+            <div className="hidden lg:block">
+              <SearchBar />
+            </div>
             <UserMenu />
-            {/* Mobile Toggle */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
-            >
-              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                {mobileOpen ? (
-                  <>
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </>
-                ) : (
-                  <>
-                    <line x1="3" y1="7" x2="21" y2="7" />
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="17" x2="21" y2="17" />
-                  </>
-                )}
-              </svg>
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="lg:hidden bg-[#141414]/95 backdrop-blur-xl border-t border-white/10">
-          <div className="px-[4%] py-4 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`block px-4 py-3 text-sm transition-colors ${
-                  pathname === link.href
-                    ? 'text-white font-semibold'
-                    : 'text-white/60 hover:text-white'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+      {/* Mobile tab bar - Netflix pill style */}
+      <div className="lg:hidden px-[4%] pb-3">
+        <div className="flex items-center gap-1 overflow-x-auto hide-scrollbar">
+          <Link href="/search" className="p-2 text-white/80 hover:text-white transition-colors shrink-0" aria-label="Search">
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="16.5" y1="16.5" x2="21" y2="21" />
+            </svg>
+          </Link>
+          {[
+            { href: '/', label: 'Home' },
+            { href: '/tv', label: 'Shows' },
+            { href: '/movies', label: 'Movies' },
+            { href: '/mytv', label: 'My List' },
+          ].map((tab) => (
+            <Link
+              key={tab.href}
+              href={tab.href}
+              className={`px-4 py-1.5 rounded-full text-sm whitespace-nowrap shrink-0 transition ${
+                pathname === tab.href
+                  ? 'bg-white/15 text-white font-medium'
+                  : 'text-white/60 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </Link>
+          ))}
         </div>
-      )}
+      </div>
     </nav>
   );
 }
