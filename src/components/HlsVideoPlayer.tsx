@@ -471,7 +471,7 @@ export default function HlsVideoPlayer({
               <div className="flex items-center justify-between p-4 border-b border-white/10">
                 <div>
                   <h2 className="text-white font-semibold">Sources</h2>
-                  <p className="text-white/50 text-xs">Pick one if the current isn't working</p>
+                  <p className="text-white/50 text-xs">Pick one if the current isn&apos;t working</p>
                 </div>
                 <button
                   onClick={() => setShowSourcePanel(false)}
