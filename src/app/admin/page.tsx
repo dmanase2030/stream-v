@@ -13,11 +13,6 @@ interface User {
 
 const ANNOUNCEMENT_KEY = 'luniflex_announcement';
 
-export function getAnnouncement(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(ANNOUNCEMENT_KEY);
-}
-
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
