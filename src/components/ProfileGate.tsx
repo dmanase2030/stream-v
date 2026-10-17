@@ -57,12 +57,16 @@ export default function ProfileGate() {
   const [adding, setAdding] = useState(false);
   const [newName, setNewName] = useState('');
 
+  // Only lock body scroll while the gate is actually visible
+  const gateVisible = !loading && !getActiveProfile();
   useEffect(() => {
+    if (!gateVisible) return;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = prev;
     };
-  }, []);
+  }, [gateVisible]);
 
   useEffect(() => {
     const stored = getProfiles();
