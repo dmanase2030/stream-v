@@ -58,6 +58,13 @@ export default function ProfileGate() {
   const [newName, setNewName] = useState('');
 
   useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  useEffect(() => {
     const stored = getProfiles();
     const active = getActiveProfile();
     if (active && stored.length > 0) {
@@ -101,7 +108,10 @@ export default function ProfileGate() {
   if (loading) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] bg-[#141414] flex flex-col items-center justify-center px-4 overflow-hidden">
+    <div
+      className="fixed inset-0 z-[200] bg-[#141414] flex flex-col items-center justify-center px-4 overflow-hidden"
+      style={{ minHeight: '100vh', minHeight: '100dvh', top: 0, left: 0, right: 0, bottom: 0 }}
+    >
       {/* Logo */}
       <div className="absolute top-8 left-[4%]">
         <span className="text-[#E50914] font-black text-3xl tracking-tighter uppercase" style={{ fontFamily: 'Arial Black, sans-serif' }}>
