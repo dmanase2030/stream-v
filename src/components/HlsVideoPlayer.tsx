@@ -63,6 +63,16 @@ export default function HlsVideoPlayer({
   const [showEpisodePanel, setShowEpisodePanel] = useState(false);
   const [showSourcePanel, setShowSourcePanel] = useState(false);
 
+  // Lock body scroll while the cinema player is open
+  useEffect(() => {
+    if (!cinemaMode) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [cinemaMode]);
+
   const savedTime = getSavedTime(id, type, season, episode);
   const effectiveDuration = duration > 0 ? duration : (runtime || (type === 'tv' ? 45 : 120)) * 60;
   const triggerAt = Math.max(effectiveDuration - 120, effectiveDuration * 0.85);
