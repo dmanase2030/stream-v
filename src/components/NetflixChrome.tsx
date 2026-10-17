@@ -69,6 +69,20 @@ export default function NetflixChrome({
     };
   }, [resetHideTimer]);
 
+  // Hide chrome when the embed player goes fullscreen (its own fullscreen button)
+  useEffect(() => {
+    const hideOnFullscreen = () => {
+      if (document.fullscreenElement) {
+        setShowControls(false);
+        if (hideTimer.current) clearTimeout(hideTimer.current);
+      } else {
+        resetHideTimer();
+      }
+    };
+    document.addEventListener('fullscreenchange', hideOnFullscreen);
+    return () => document.removeEventListener('fullscreenchange', hideOnFullscreen);
+  }, [resetHideTimer]);
+
   // Show next episode card near the end
   useEffect(() => {
     if (nextEpisodeUrl && duration > 0 && duration - currentTime < 90 && currentTime > 0) {
