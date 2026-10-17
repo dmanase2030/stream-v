@@ -32,14 +32,18 @@ export default function ContentCard({ movie, type, index = 0 }: ContentCardProps
       className="block w-full group/card"
       style={{ animationDelay: `${index * 40}ms` }}
     >
-      <div className="relative aspect-[2/3] rounded overflow-hidden bg-[#2a2a2a] transition-all duration-300 group-hover/card:scale-[1.04] group-hover/card:z-10 group-hover/card:shadow-2xl group-hover/card:shadow-black/60 cursor-pointer">
+      <div className="relative aspect-video rounded-md overflow-hidden bg-[#2a2a2a] transition-all duration-300 group-hover/card:scale-[1.04] group-hover/card:z-10 group-hover/card:shadow-2xl group-hover/card:shadow-black/60 cursor-pointer">
         <Image
-          src={getImageUrl(movie.poster_path, 'w342')}
+          src={getImageUrl(movie.backdrop_path || movie.poster_path, 'w500')}
           alt={title}
           fill
           className="object-cover"
-          sizes="(max-width: 640px) 160px, (max-width: 1024px) 180px, 200px"
+          sizes="(max-width: 640px) 240px, (max-width: 1024px) 280px, 300px"
         />
+        {/* Netflix N badge */}
+        <div className="absolute top-1.5 left-1.5 z-10">
+          <span className="text-[#E50914] font-black text-sm leading-none drop-shadow-md" style={{ fontFamily: 'Arial Black, sans-serif' }}>N</span>
+        </div>
         {/* Netflix-style hover overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
           <p className="text-white text-xs font-semibold line-clamp-2 mb-1">{title}</p>

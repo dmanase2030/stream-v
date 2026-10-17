@@ -44,7 +44,7 @@ export default function HomeRows(data: HomeRowsProps) {
   const hidden = (id: string) => hiddenRows.includes(id);
 
   return (
-    <div className="bg-[#141414] min-h-screen">
+    <div className="bg-black min-h-screen">
       <HeroLastWatched
         fallbackHero={heroMovie ? <HeroBanner movie={heroMovie} /> : null}
       />

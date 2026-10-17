@@ -27,8 +27,8 @@ export default function HeroBanner({ movie }: HeroBannerProps) {
       )}
 
       {/* Netflix-style gradients */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/40 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-[#141414]/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/30" />
 
       {/* Content - Netflix billboard style */}
       <div className="absolute inset-0 flex items-center">
