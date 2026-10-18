@@ -132,13 +132,6 @@ export default function HlsVideoPlayer({
           setEmbedLoading(true);
           return;
         }
-        if (failoverReasonRef.current === 'timeout') {
-          failoverDoneRef.current = true;
-          failoverReasonRef.current = null;
-          setMode('embed');
-          setEmbedLoading(true);
-          return;
-        }
         if (triedHlsRef.current) {
           setAllFailed(true);
           setHlsLoading(false);
