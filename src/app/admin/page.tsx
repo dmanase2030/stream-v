@@ -1,1 +1,81 @@
-J3VzZSBjbGllbnQnOwoKaW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VTdGF0ZSB9IGZyb20gJ3JlYWN0JzsKaW1wb3J0IExpbmsgZnJvbSAnbmV4dC9saW5rJzsKaW1wb3J0IHsgZ2V0V2F0Y2hIaXN0b3J5IH0gZnJvbSAnQC9saWIvaGlzdG9yeSc7CmltcG9ydCB7IFBhZ2VUaXRsZSB9IGZyb20gJy4vY29tcG9uZW50cyc7CgpleHBvcnQgZGVmYXVsdCBmdW5jdGlvbiBBZG1pbk92ZXJ2aWV3KCkgewogIGNvbnN0IFtzdGF0cywgc2V0U3RhdHNdID0gdXNlU3RhdGUoeyB0b3RhbDogMCwgY29tcGxldGVkOiAwLCBpblByb2dyZXNzOiAwLCBtb3ZpZXM6IDAsIHNob3dzOiAwIH0pOwogIGNvbnN0IFt1c2VyQ291bnQsIHNldFVzZXJDb3VudF0gPSB1c2VTdGF0ZTxudW1iZXIgfCBudWxsPihudWxsKTsKICBjb25zdCBbYmFubmVkQ291bnQsIHNldEJhbm5lZENvdW50XSA9IHVzZVN0YXRlPG51bWJlciB8IG51bGw+KG51bGwpOwoKICB1c2VFZmZlY3QoKCkgPT4gewogICAgdHJ5IHsKICAgICAgY29uc3QgaGlzdG9yeSA9IGdldFdhdGNoSGlzdG9yeSgpOwogICAgICBzZXRTdGF0cyh7CiAgICAgICAgdG90YWw6IGhpc3RvcnkubGVuZ3RoLAogICAgICAgIGNvbXBsZXRlZDogaGlzdG9yeS5maWx0ZXIoKGg6IGFueSkgPT4gaC5jb21wbGV0ZWQpLmxlbmd0aCwKICAgICAgICBpblByb2dyZXNzOiBoaXN0b3J5LmZpbHRlcigoaDogYW55KSA9PiAhaC5jb21wbGV0ZWQgJiYgaC5wcm9ncmVzcyA+IDApLmxlbmd0aCwKICAgICAgICBtb3ZpZXM6IGhpc3RvcnkuZmlsdGVyKChoOiBhbnkpID0+IGgudHlwZSA9PT0gJ21vdmllJykubGVuZ3RoLAogICAgICAgIHNob3dzOiBoaXN0b3J5LmZpbHRlcigoaDogYW55KSA9PiBoLnR5cGUgPT09ICd0dicpLmxlbmd0aCwKICAgICAgfSk7CiAgICB9IGNhdGNoIHt9CiAgICBmZXRjaCgnL2FwaS9hZG1pbi91c2VycycpCiAgICAgIC50aGVuKChyKSA9PiAoci5vayA/IHIuanNvbigpIDogbnVsbCkpCiAgICAgIC50aGVuKChkKSA9PiB7CiAgICAgICAgaWYgKGQpIHsKICAgICAgICAgIHNldFVzZXJDb3VudChkLnRvdGFsID8/IGQudXNlcnM/Lmxlbmd0aCA/PyAwKTsKICAgICAgICAgIHNldEJhbm5lZENvdW50KGQudXNlcnM/LmZpbHRlcigodTogYW55KSA9PiB1LmJhbm5lZCkubGVuZ3RoID8/IDApOwogICAgICAgIH0KICAgICAgfSkKICAgICAgLmNhdGNoKCgpID0+IHt9KTsKICB9LCBbXSk7CgogIGNvbnN0IGNhcmRzID0gWwogICAgeyBsYWJlbDogJ1JlZ2lzdGVyZWQgVXNlcnMnLCB2YWx1ZTogdXNlckNvdW50ID8/ICctJywgY29sb3I6ICcnIH0sCiAgICB7IGxhYmVsOiAnQmFubmVkIFVzZXJzJywgdmFsdWU6IGJhbm5lZENvdW50ID8/ICctJywgY29sb3I6ICd0ZXh0LVsjRTUwOTE0XScgfSwKICAgIHsgbGFiZWw6ICdUb3RhbCBXYXRjaGVkJywgdmFsdWU6IHN0YXRzLnRvdGFsLCBjb2xvcjogJycgfSwKICAgIHsgbGFiZWw6ICdDb21wbGV0ZWQnLCB2YWx1ZTogc3RhdHMuY29tcGxldGVkLCBjb2xvcjogJ3RleHQtZW1lcmFsZC00MDAnIH0sCiAgICB7IGxhYmVsOiAnSW4gUHJvZ3Jlc3MnLCB2YWx1ZTogc3RhdHMuaW5Qcm9ncmVzcywgY29sb3I6ICd0ZXh0LVsjRTUwOTE0XScgfSwKICBdOwoKICBjb25zdCBsaW5rcyA9IFsKICAgIHsgaHJlZjogJy9hZG1pbi91c2VycycsIHRpdGxlOiAnVXNlcnMnLCBkZXNjOiAnVmlldyBhbmQgbWFuYWdlIHJlZ2lzdGVyZWQgdXNlcnMnIH0sCiAgICB7IGhyZWY6ICcvYWRtaW4vYmFucycsIHRpdGxlOiAnQmFucycsIGRlc2M6ICdCYW5uZWQgdXNlcnMgYW5kIHVuYmFuJyB9LAogICAgeyBocmVmOiAnL2FkbWluL2Fubm91bmNlbWVudHMnLCB0aXRsZTogJ0Fubm91bmNlbWVudHMnLCBkZXNjOiAnU2l0ZS13aWRlIGJhbm5lciBtZXNzYWdlJyB9LAogICAgeyBocmVmOiAnL2FkbWluL2hvbWVwYWdlJywgdGl0bGU6ICdIb21lcGFnZScsIGRlc2M6ICdIZXJvIHBpY2sgYW5kIHJvdyB2aXNpYmlsaXR5JyB9LAogICAgeyBocmVmOiAnL2FkbWluL3NldHRpbmdzJywgdGl0bGU6ICdTZXR0aW5ncycsIGRlc2M6ICdEYXRhIGFuZCBzaXRlIHNldHRpbmdzJyB9LAogIF07CgogIHJldHVybiAoCiAgICA8ZGl2PgogICAgICA8UGFnZVRpdGxlCiAgICAgICAgdGl0bGU9Ik92ZXJ2aWV3IgogICAgICAgIHN1Yj0iU2l0ZSBzdGF0cyBhbmQgcXVpY2sgbGlua3MuIgogICAgICAgIGFjdGlvbj17CiAgICAgICAgICA8TGluayBocmVmPSIvIiBjbGFzc05hbWU9InB4LTUgcHktMi41IGJnLXdoaXRlIHRleHQtYmxhY2sgdGV4dC1zbSBmb250LXNlbWlib2xkIHJvdW5kZWQgaG92ZXI6Ymctd2hpdGUvOTAgdHJhbnNpdGlvbiI+CiAgICAgICAgICAgIFZpZXcgU2l0ZQogICAgICAgICAgPC9MaW5rPgogICAgICAgIH0KICAgICAgLz4KICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTIgbWQ6Z3JpZC1jb2xzLTMgbGc6Z3JpZC1jb2xzLTUgZ2FwLTQgbWItOCI+CiAgICAgICAge2NhcmRzLm1hcCgoYykgPT4gKAogICAgICAgICAgPGRpdiBrZXk9e2MubGFiZWx9IGNsYXNzTmFtZT0iYmctWyMxNDE0MTRdIGJvcmRlciBib3JkZXItd2hpdGUvMTAgcm91bmRlZC1tZCBwLTUiPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtd2hpdGUvNDAgdGV4dC14cyB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXIgbWItMSI+e2MubGFiZWx9PC9wPgogICAgICAgICAgICA8cCBjbGFzc05hbWU9e2B0ZXh0LTN4bCBmb250LWJvbGQgJHtjLmNvbG9yfWB9PntjLnZhbHVlfTwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgICkpfQogICAgICA8L2Rpdj4KICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC1sZyBmb250LXNlbWlib2xkIG1iLTMiPk1hbmFnZTwvaDI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0xIG1kOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy0zIGdhcC00Ij4KICAgICAgICB7bGlua3MubWFwKChsKSA9PiAoCiAgICAgICAgICA8TGluayBrZXk9e2wuaHJlZn0gaHJlZj17bC5ocmVmfSBjbGFzc05hbWU9ImJnLVsjMTQxNDE0XSBib3JkZXIgYm9yZGVyLXdoaXRlLzEwIHJvdW5kZWQtbWQgcC01IGhvdmVyOmJnLVsjMWMxYzFjXSBob3Zlcjpib3JkZXItd2hpdGUvMjAgdHJhbnNpdGlvbiI+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0iZm9udC1zZW1pYm9sZCBtYi0xIj57bC50aXRsZX08L3A+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC13aGl0ZS80MCB0ZXh0LXNtIj57bC5kZXNjfTwvcD4KICAgICAgICAgIDwvTGluaz4KICAgICAgICApKX0KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICApOwp9Cg==
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { getWatchHistory } from '@/lib/history';
+import { PageTitle } from './components';
+
+export default function AdminOverview() {
+  const [stats, setStats] = useState({ total: 0, completed: 0, inProgress: 0, movies: 0, shows: 0 });
+  const [userCount, setUserCount] = useState<number | null>(null);
+  const [bannedCount, setBannedCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    try {
+      const history = getWatchHistory();
+      setStats({
+        total: history.length,
+        completed: history.filter((h: any) => h.completed).length,
+        inProgress: history.filter((h: any) => !h.completed && h.progress > 0).length,
+        movies: history.filter((h: any) => h.type === 'movie').length,
+        shows: history.filter((h: any) => h.type === 'tv').length,
+      });
+    } catch {}
+    fetch('/api/admin/users')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) {
+          setUserCount(d.total ?? d.users?.length ?? 0);
+          setBannedCount(d.users?.filter((u: any) => u.banned).length ?? 0);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const cards = [
+    { label: 'Registered Users', value: userCount ?? '-', color: '' },
+    { label: 'Banned Users', value: bannedCount ?? '-', color: 'text-[#E50914]' },
+    { label: 'Total Watched', value: stats.total, color: '' },
+    { label: 'Completed', value: stats.completed, color: 'text-emerald-400' },
+    { label: 'In Progress', value: stats.inProgress, color: 'text-[#E50914]' },
+  ];
+
+  const links = [
+    { href: '/admin/users', title: 'Users', desc: 'View and manage registered users' },
+    { href: '/admin/bans', title: 'Bans', desc: 'Banned users and unban' },
+    { href: '/admin/announcements', title: 'Announcements', desc: 'Site-wide banner message' },
+    { href: '/admin/homepage', title: 'Homepage', desc: 'Hero pick and row visibility' },
+    { href: '/admin/settings', title: 'Settings', desc: 'Data and site settings' },
+  ];
+
+  return (
+    <div>
+      <PageTitle
+        title="Overview"
+        sub="Site stats and quick links."
+        action={
+          <Link href="/" className="px-5 py-2.5 bg-white text-black text-sm font-semibold rounded hover:bg-white/90 transition">
+            View Site
+          </Link>
+        }
+      />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+        {cards.map((c) => (
+          <div key={c.label} className="bg-[#141414] border border-white/10 rounded-md p-5">
+            <p className="text-white/40 text-xs uppercase tracking-wider mb-1">{c.label}</p>
+            <p className={`text-3xl font-bold ${c.color}`}>{c.value}</p>
+          </div>
+        ))}
+      </div>
+      <h2 className="text-lg font-semibold mb-3">Manage</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {links.map((l) => (
+          <Link key={l.href} href={l.href} className="bg-[#141414] border border-white/10 rounded-md p-5 hover:bg-[#1c1c1c] hover:border-white/20 transition">
+            <p className="font-semibold mb-1">{l.title}</p>
+            <p className="text-white/40 text-sm">{l.desc}</p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
