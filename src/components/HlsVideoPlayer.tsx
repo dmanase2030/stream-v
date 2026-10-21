@@ -59,6 +59,10 @@ export default function HlsVideoPlayer({
   const triedHlsRef = useRef(false);
   const failoverDoneRef = useRef(false);
   const failoverReasonRef = useRef<null | 'timeout' | 'error'>(null);
+  const embedRetryRef = useRef(0);
+  const retryAtRef = useRef(0);
+  const latestTimeRef = useRef(0);
+  const [embedKey, setEmbedKey] = useState(0);
   const [failoverMsg, setFailoverMsg] = useState<string | null>(null);
   const [allFailed, setAllFailed] = useState(false);
   const [showSkipIntro, setShowSkipIntro] = useState(false);
@@ -132,6 +136,12 @@ export default function HlsVideoPlayer({
           setEmbedLoading(true);
           return;
         }
+        if (failoverReasonRef.current === 'error' && embedRetryRef.current < 2) {
+          failoverReasonRef.current = null;
+          setMode('embed');
+          retryEmbed();
+          return;
+        }
         if (triedHlsRef.current) {
           setAllFailed(true);
           setHlsLoading(false);
@@ -183,6 +193,12 @@ export default function HlsVideoPlayer({
             setEmbedLoading(true);
             return;
           }
+          if (failoverReasonRef.current === 'error' && embedRetryRef.current < 2) {
+            failoverReasonRef.current = null;
+            setMode('embed');
+            retryEmbed();
+            return;
+          }
           if (triedHlsRef.current) {
             setAllFailed(true);
             return;
@@ -207,6 +223,12 @@ export default function HlsVideoPlayer({
           failoverReasonRef.current = null;
           setMode('embed');
           setEmbedLoading(true);
+          return;
+        }
+        if (failoverReasonRef.current === 'error' && embedRetryRef.current < 2) {
+          failoverReasonRef.current = null;
+          setMode('embed');
+          retryEmbed();
           return;
         }
         if (triedHlsRef.current) {
@@ -293,13 +315,16 @@ export default function HlsVideoPlayer({
 
       const { event: playerEvent, currentTime: ct, duration: dur } = msg.data;
       if (dur > 0) setDuration(dur);
-      if (ct >= 0) setCurrentTime(ct);
+      if (ct >= 0) { setCurrentTime(ct); latestTimeRef.current = ct; }
 
       const realDuration = dur > 0 ? dur : effectiveDuration;
       const progress = realDuration > 0 ? Math.min(Math.round((ct / realDuration) * 100), 100) : 0;
 
       if (['play', 'playing', 'timeupdate', 'pause', 'seeked', 'canplay'].includes(playerEvent)) {
         embedHealthyRef.current = true;
+      }
+      if (playerEvent === 'timeupdate' && ct > retryAtRef.current + 30) {
+        embedRetryRef.current = 0;
       }
       if (playerEvent === 'error') {
         handleEmbedHardError();
@@ -372,10 +397,28 @@ export default function HlsVideoPlayer({
     triedHlsRef.current = false;
     failoverDoneRef.current = false;
     failoverReasonRef.current = null;
+    embedRetryRef.current = 0;
+    retryAtRef.current = 0;
     setAllFailed(false);
   }, [id, type, season, episode]);
 
+  const retryEmbed = () => {
+    embedRetryRef.current += 1;
+    retryAtRef.current = latestTimeRef.current;
+    embedHealthyRef.current = false;
+    setFailoverMsg('Connection dropped - reconnecting...');
+    setTimeout(() => setFailoverMsg(null), 3500);
+    setEmbedLoading(true);
+    setEmbedKey((k) => k + 1);
+  };
+
   const handleEmbedHardError = () => {
+    // Most mid-playback drops are a hiccup in the embed session - a fresh
+    // reload resumes where it left off. Try that before switching modes.
+    if (embedRetryRef.current < 2) {
+      retryEmbed();
+      return;
+    }
     if (failoverDoneRef.current || triedHlsRef.current) return;
     triedHlsRef.current = true;
     failoverReasonRef.current = 'error';
@@ -401,7 +444,7 @@ export default function HlsVideoPlayer({
       }
     }, 60000);
     return () => clearTimeout(t);
-  }, [mode, id, type, season, episode]);
+  }, [mode, id, type, season, episode, embedKey]);
 
   // Embed auto-fallback
   const tryNextSource = useCallback(() => {
@@ -435,6 +478,8 @@ export default function HlsVideoPlayer({
     triedHlsRef.current = false;
     failoverDoneRef.current = false;
     failoverReasonRef.current = null;
+    embedRetryRef.current = 0;
+    retryAtRef.current = 0;
   };
 
   const switchToHls = () => {
@@ -533,6 +578,7 @@ export default function HlsVideoPlayer({
           )}
           {mode === 'embed' && (
             <iframe
+              key={embedKey}
               ref={iframeRef}
               src={embedUrl}
               className="w-full h-full"
@@ -843,6 +889,7 @@ export default function HlsVideoPlayer({
         {/* Embed iframe */}
         {mode === 'embed' && (
           <iframe
+            key={embedKey}
             ref={iframeRef}
             src={embedUrl}
             className="w-full h-full"
