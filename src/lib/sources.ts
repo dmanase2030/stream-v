@@ -1,6 +1,6 @@
 import { StreamingSource } from '@/types';
 
-// SAHND+ brand colors (hex without #)
+// LUNIFLEX brand colors (hex without #)
 const PRIMARY_COLOR = 'E50914';
 const SECONDARY_COLOR = 'B20710';
 
