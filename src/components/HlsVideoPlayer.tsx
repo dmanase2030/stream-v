@@ -65,6 +65,7 @@ export default function HlsVideoPlayer({
   const [embedKey, setEmbedKey] = useState(0);
   const [failoverMsg, setFailoverMsg] = useState<string | null>(null);
   const [allFailed, setAllFailed] = useState(false);
+  const [unreachable, setUnreachable] = useState(false);
   const [showSkipIntro, setShowSkipIntro] = useState(false);
   const lastTapRef = useRef<{ time: number; x: number } | null>(null);
   const [seekFlash, setSeekFlash] = useState<{ dir: string; key: number } | null>(null);
@@ -134,6 +135,7 @@ export default function HlsVideoPlayer({
           failoverReasonRef.current = null;
           setMode('embed');
           setEmbedLoading(true);
+          setUnreachable(true);
           return;
         }
         if (failoverReasonRef.current === 'error' && embedRetryRef.current < 2) {
@@ -191,6 +193,7 @@ export default function HlsVideoPlayer({
             failoverReasonRef.current = null;
             setMode('embed');
             setEmbedLoading(true);
+            setUnreachable(true);
             return;
           }
           if (failoverReasonRef.current === 'error' && embedRetryRef.current < 2) {
@@ -223,6 +226,7 @@ export default function HlsVideoPlayer({
           failoverReasonRef.current = null;
           setMode('embed');
           setEmbedLoading(true);
+          setUnreachable(true);
           return;
         }
         if (failoverReasonRef.current === 'error' && embedRetryRef.current < 2) {
@@ -322,6 +326,7 @@ export default function HlsVideoPlayer({
 
       if (['play', 'playing', 'timeupdate', 'pause', 'seeked', 'canplay'].includes(playerEvent)) {
         embedHealthyRef.current = true;
+        setUnreachable(false);
       }
       if (playerEvent === 'timeupdate' && ct > retryAtRef.current + 30) {
         embedRetryRef.current = 0;
@@ -400,6 +405,7 @@ export default function HlsVideoPlayer({
     embedRetryRef.current = 0;
     retryAtRef.current = 0;
     setAllFailed(false);
+    setUnreachable(false);
   }, [id, type, season, episode]);
 
   const retryEmbed = () => {
@@ -409,7 +415,8 @@ export default function HlsVideoPlayer({
     setFailoverMsg('Connection dropped - reconnecting...');
     setTimeout(() => setFailoverMsg(null), 3500);
     setEmbedLoading(true);
-    setEmbedKey((k) => k + 1);
+    const delay = embedRetryRef.current === 1 ? 2500 : 6000;
+    setTimeout(() => setEmbedKey((k) => k + 1), delay);
   };
 
   const handleEmbedHardError = () => {
@@ -480,6 +487,7 @@ export default function HlsVideoPlayer({
     failoverReasonRef.current = null;
     embedRetryRef.current = 0;
     retryAtRef.current = 0;
+    setUnreachable(false);
   };
 
   const switchToHls = () => {
@@ -642,6 +650,26 @@ export default function HlsVideoPlayer({
                   embedHealthyRef.current = false;
                   switchToEmbed();
                 }}
+                className="px-8 py-3 bg-[#E50914] hover:bg-[#f6121d] text-white font-bold rounded transition"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        )}
+
+        {unreachable && mode === 'embed' && !allFailed && (
+          <div className="absolute inset-0 z-40 bg-black/95 flex items-center justify-center p-6">
+            <div className="text-center max-w-sm">
+              <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-[#E50914]/15 flex items-center justify-center">
+                <svg className="w-8 h-8 text-[#E50914]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" />
+                </svg>
+              </div>
+              <h3 className="text-white text-lg font-semibold mb-2">Can&apos;t reach the video source</h3>
+              <p className="text-white/50 text-sm mb-6">The video provider isn&apos;t answering right now - it may be temporarily blocking connections. Wait a few minutes and try again.</p>
+              <button
+                onClick={() => switchToEmbed()}
                 className="px-8 py-3 bg-[#E50914] hover:bg-[#f6121d] text-white font-bold rounded transition"
               >
                 Try Again
